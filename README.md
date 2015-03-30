@@ -1,2 +1,10 @@
 # HAC-DM
-Clustering app - Hierarchical Agglomerative Clustering 
+Data mining app using PyQT 
+
+## Method
+* Hierarchical Agglomerative Clustering 
+
+## Library
+* scipy
+* numpy
+* pandas
