@@ -1,10 +1,11 @@
 # HAC-DM
-Data mining app using PyQT 
+Clustering application for customer segmentation
 
 ## Method
 * Hierarchical Agglomerative Clustering 
 
 ## Library
+* PyQt-4
 * scipy
 * numpy
 * pandas
