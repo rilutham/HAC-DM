@@ -3,8 +3,8 @@
 
 from About import About
 from PyQt4 import QtGui
-import  pandas as pd
-#from ImportData import ImportData
+import pandas as pd
+from ImportData import ImportData
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster 
 import matplotlib.pyplot as plt
@@ -15,15 +15,11 @@ class ApplicationWindow(QtGui.QMainWindow):
     '''
     classdocs
     '''
-    
     def __init__(self, parent = None):
         '''
         Constructor
         '''
-        super(ApplicationWindow, self).__init__(parent)
-        self.init_ui()
-                
-    def init_ui(self):               
+        super(ApplicationWindow, self).__init__(parent)             
         
         # Main window setting
         self.setGeometry(0, 0, 980, 768)
@@ -33,12 +29,15 @@ class ApplicationWindow(QtGui.QMainWindow):
         import_action = QtGui.QAction(QtGui.QIcon('icons/new.png'), 'Impor data', self)
         import_action.setShortcut('Ctrl+i')
         import_action.setStatusTip('Impor data pelanggan')
-        import_action.triggered.connect(self.import_csv)
+        import_action.triggered.connect(self.show_import)
         
         exit_action = QtGui.QAction('Exit', self)
         exit_action.setShortcut('Ctrl+Q')
         exit_action.setStatusTip('Exit application')
         exit_action.triggered.connect(self.close)
+        
+        clean_action = QtGui.QAction('Hapus nilai kosong',self)
+        clean_action.triggered.connect(self.clean_missing_value)
         
         seg_action = QtGui.QAction('Proses', self)
         seg_action.setShortcut('F5')
@@ -59,6 +58,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         data_menu.addAction(import_action)
         data_menu.addAction(exit_action)
         preprocess_menu = menubar.addMenu('&Preprocessing')
+        preprocess_menu.addAction(clean_action)
         segmen_menu = menubar.addMenu('&Segmentasi')
         segmen_menu.addAction(seg_action)
         result_menu = menubar.addMenu('&Hasil Segmentasi')
@@ -128,16 +128,28 @@ class ApplicationWindow(QtGui.QMainWindow):
         
         
     def centerOnScreen (self):
-        '''centerOnScreen()
-        Centers the window on the screen.'''
-        resolution = QtGui.QDesktopWidget().screenGeometry()
-        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                  (resolution.height() / 2) - (self.frameSize().height() / 2))   
+        # Centers the window on the screen. 
+        size = self.frameSize()
+        desktopSize = QtGui.QDesktopWidget().screenGeometry()
+        left = (desktopSize.width()/2)-(size.width()/2)
+        top = (desktopSize.height()/2)-(size.height()/2)
+        self.move(left, top)
     
+    def show_import(self):
+        imp = ImportData()
+        imp.exec_()
+        if imp.display_table:
+            if not imp.selected_col:
+                imp.get_selected_column()
+                print("Tidak ada kolom dipilih!") #Seharusnya tampilkan dalam dialog
+            else:
+                imp.import_selected_data()
+                self.display_raw_data(imp.df_selected_data)
+        
     def show_about(self):
         abt = About(self)
-        abt.show()
-           
+        abt.show()  
+    
     def import_csv(self):
         # Provides a dialog that allow users to select only *.csv file.
         file_name = QtGui.QFileDialog.getOpenFileName(self, 'Open File',".","(*.csv)")
@@ -146,19 +158,24 @@ class ApplicationWindow(QtGui.QMainWindow):
         global df_raw_data
         df_raw_data  = pd.DataFrame.from_csv(str(file_name),header=0, index_col=False)
         
+        self.display_raw_data(df_raw_data)        
+    
+    def display_raw_data(self, data):    
         # Specify the number of rows and columns of table
-        self.raw_data_table.setRowCount(len(df_raw_data.index))
-        self.raw_data_table.setColumnCount(len(df_raw_data.columns))
+        self.raw_data_table.setRowCount(len(data.index))
+        self.raw_data_table.setColumnCount(len(data.columns))
         
         # Set cell value of table
-        for i in range(len(df_raw_data.index)):
-            for j in range(len(df_raw_data.columns)):
-                self.raw_data_table.setItem(i,j,QtGui.QTableWidgetItem(str(df_raw_data.iget_value(i, j))))
+        for i in range(len(data.index)):
+            for j in range(len(data.columns)):
+                self.raw_data_table.setItem(i,j,QtGui.QTableWidgetItem(str(data.iget_value(i, j))))
         
         # Create the columns header
-        self.raw_data_table.setHorizontalHeaderLabels(list(df_raw_data.columns.values))
-        
-        return df_raw_data   
+        self.raw_data_table.setHorizontalHeaderLabels(list(data.columns.values))
+       
+    def clean_missing_value(self, clean_data):
+        clean_data = df_raw_data[df_raw_data.item_Persib.notnull()]
+        self.display_raw_data(clean_data)
     
     def segmen(self):      
         # Data which is use for distance measure
@@ -204,3 +221,5 @@ class ApplicationWindow(QtGui.QMainWindow):
         
         # Write DataFrame into *.csv file.
         df_raw_data.to_csv(file_name_save, sep=',', index=False)  
+
+
