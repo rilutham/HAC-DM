@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-""" 
-Customer Segmentation using Hierarchical Agglomerative Clustering
+""" Customer Segmentation System
 --- Undergraduate Thesis Project ---
 
 Riky Lutfi Hamzah
@@ -12,12 +11,12 @@ Indonesia Computer University
 
 import sys
 from PyQt4 import QtGui
-from ApplicationWindow import ApplicationWindow
+from MainWindow import MainWindow
 
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    window = ApplicationWindow()
+    window = MainWindow()
     window.show()
     sys.exit(app.exec_())
 

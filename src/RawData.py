@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""a"""
+"""RawData.py
+@author: rilutham
+"""
 
 from PyQt4 import QtGui, QtCore
-from QtGui import QDialogButtonBox
 import pandas as pd
 
 class RawData(QtGui.QDialog):
@@ -32,7 +33,7 @@ class RawData(QtGui.QDialog):
         self.v_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.v_list.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         # button_box
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.get_selected_column)
         button_box.rejected.connect(self.close_dialog)
         # Displaying the widget
@@ -94,7 +95,7 @@ class RawData(QtGui.QDialog):
                                           usecols=self.selected_col)
         # Insert data to DataFrame
         self.df_selected_data = pd.DataFrame(self.selected_data)
-        # State of displaying data on ApplicationWindow
+        # State of displaying data on MainWindow
         self.display_table = True
         # Signal
         self.accept()
@@ -103,7 +104,7 @@ class RawData(QtGui.QDialog):
         '''
         d
         '''
-        # State of displaying data on ApplicationWindow
+        # State of displaying data on MainWindow
         self.display_table = False
         # Signal
         self.reject()
