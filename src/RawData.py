@@ -70,7 +70,7 @@ class RawData(QtGui.QDialog):
             self.item = QtGui.QListWidgetItem(col)
             self.v_list.addItem(self.item)
             self.item.setFlags(self.item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            self.item.setCheckState(QtCore.Qt.Unchecked)
+            self.item.setCheckState(QtCore.Qt.Checked)
     
     def get_selected_column(self):
         '''
@@ -100,6 +100,13 @@ class RawData(QtGui.QDialog):
         # Signal
         self.accept()
     
+    def count_stats(self):
+        self.data_name = str(self.file)
+        self.col_num = len(self.df_selected_data.columns)
+        self.row_num = len(self.df_selected_data.index)
+        self.missing_num = self.df_selected_data.shape[0] - self.df_selected_data.dropna().shape[0]
+        self.missing_percent = (self.missing_num / self.row_num) * 100
+        self.stats = "Nama file: {0}\nJumlah kolom: {1}\nJumlah baris: {2}\nBaris dengan nilai kosong: {3} ({4}%)".format(self.data_name,self.col_num,self.row_num,self.missing_num,self.missing_percent)
     def close_dialog(self):
         '''
         d

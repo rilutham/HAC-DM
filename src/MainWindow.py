@@ -87,16 +87,30 @@ class MainWindow(QtGui.QMainWindow):
 
         self.tabs.addTab(self.tab1, "Pengolahan Data")
         # Setting Tab 1
-        self.raw_data_table = QtGui.QTableWidget(self) 
+        self.stat_frame = QtGui.QFrame()
+        self.frame_layout = QtGui.QHBoxLayout()
+        self.stat_frame.setLayout(self.frame_layout)
+        self.txt_stats = QtGui.QLabel('', self)
+        self.txt_stats.setStyleSheet("font-size: 10pt; font-weight: bold; ")
+        self.frame_layout.addWidget(self.txt_stats)
+        
+        self.raw_data_table = QtGui.QTableWidget(self)
         self.v_box_layout_1 = QtGui.QVBoxLayout()
+        self.v_box_layout_1.addWidget(self.stat_frame)
         self.v_box_layout_1.addWidget(self.raw_data_table)
+        self.raw_data_table.hide()
         
         # Setting Tab 2
+        self.treshold_edit = QtGui.QLineEdit()
+        self.btn_treshold = QtGui.QPushButton("Set treshold", self)
+        self.btn_treshold.clicked.connect(self.set_treshold)
         self.figure = plt.figure()
         self.canvas_for_dendrogram = FigureCanvas(self.figure) 
         self.toolbar = NavigationToolbar(self.canvas_for_dendrogram, self)
         # self.toolbar.hide() # For hide the matplotlib toolbar
         self.v_box_layout_2 = QtGui.QVBoxLayout()
+        self.v_box_layout_2.addWidget(self.treshold_edit)
+        self.v_box_layout_2.addWidget(self.btn_treshold)
         self.v_box_layout_2.addWidget(self.canvas_for_dendrogram)
         self.v_box_layout_2.addWidget(self.toolbar)
         
@@ -106,7 +120,7 @@ class MainWindow(QtGui.QMainWindow):
         self.v_box_layout_3.addWidget(self.result_data_table)
         
         #Set Layout for each tab
-        self.tab1.setLayout(self.v_box_layout_1)   
+        self.tab1.setLayout(self.v_box_layout_1)
         self.tab2.setLayout(self.v_box_layout_2)
         self.tab3.setLayout(self.v_box_layout_3)
         
@@ -150,6 +164,11 @@ class MainWindow(QtGui.QMainWindow):
                 # Enable/ disable some menu
                 self.seg_action.setEnabled(True)
                 self.save_result_action.setEnabled(False)
+                
+                # Count data statistics
+                self.imp.count_stats()
+                self.txt_stats.setText(self.imp.stats)
+                self.raw_data_table.show()
         
     def show_about(self):
         abt = About(self)
@@ -184,10 +203,23 @@ class MainWindow(QtGui.QMainWindow):
         # Set to Tab 2
         self.tabs.setCurrentWidget(self.tab2)
         # Display result data in QTableWidget
-        self.sgm.get_result_data()
         self.display_result_data(self.sgm.df_result_data)
         # Enable some menu item
         self.save_result_action.setEnabled(True)
+        
+    def set_treshold(self):
+        self.figure.clf()
+        self.treshold_text = str(self.treshold_edit.text())
+        self.treshold_value = float(self.treshold_text)
+        print self.treshold_text
+        self.sgm.refresh_result_data(self.treshold_value)
+        
+        # Draw dendrogram on canvas
+        self.canvas_for_dendrogram.draw()
+        # Set to Tab 2
+        self.tabs.setCurrentWidget(self.tab2)
+        # Display result data in QTableWidget
+        self.display_result_data(self.sgm.df_result_data)
         
     def display_result_data(self, data):    
         # Specify the number of rows and columns of table
