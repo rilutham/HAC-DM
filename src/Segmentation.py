@@ -38,7 +38,7 @@ class Segmentation(QtGui.QWidget):
         self.row_dist = pd.DataFrame(squareform(pdist(self.dist_data, metric='jaccard')))
         self.row_dist = self.row_dist.fillna(0)
         
-    def do_segmentation(self):  
+    def do_segmentation(self):
         # Cluster using complete linkage
         self.row_clusters = linkage(self.row_dist, method='complete')
         

@@ -100,13 +100,16 @@ class RawData(QtGui.QDialog):
         # Signal
         self.accept()
     
-    def count_stats(self):
+    def count_stats(self, data):
         self.data_name = str(self.file)
-        self.col_num = len(self.df_selected_data.columns)
-        self.row_num = len(self.df_selected_data.index)
-        self.missing_num = self.df_selected_data.shape[0] - self.df_selected_data.dropna().shape[0]
-        self.missing_percent = (self.missing_num / self.row_num) * 100
-        self.stats = "Nama file: {0}\nJumlah kolom: {1}\nJumlah baris: {2}\nBaris dengan nilai kosong: {3} ({4}%)".format(self.data_name,self.col_num,self.row_num,self.missing_num,self.missing_percent)
+        self.col_num = len(data.columns)
+        self.row_num = len(data.index)
+        self.missing_row_num = data.shape[0] - data.dropna().shape[0]
+        self.missing_num = data.isnull().values.ravel().sum()
+        self.missing_percent = (self.missing_num * 100) / self.row_num
+        print self.missing_percent
+        self.stats = "Nama file: {0}\nJumlah kolom: {1}\nJumlah baris: {2}\nNilai kosong: {3} ({4}%)\nBaris dengan nilai kosong: {5}".format(self.data_name,self.col_num,self.row_num,self.missing_num,self.missing_percent,self.missing_row_num)
+    
     def close_dialog(self):
         '''
         d

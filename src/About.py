@@ -10,8 +10,8 @@ class About(QtGui.QDialog):
     """
     Display application information
     """
-    def __init__(self, parent):
-        super(About, self).__init__(parent)
+    def __init__(self):
+        super(About, self).__init__()
         self.setWindowTitle('Tentang Aplikasi')
         self.resize(350, 350)
         self.txt_about = QtGui.QLabel("""Customer Segmentation System
