@@ -7,7 +7,7 @@
 
 from PyQt4 import QtGui
 from RawData import RawData
-from Preprocessing import Bining
+from Preprocessing import Bining, DeriveAttribute
 from Segmentation import Segmentation
 from About import About
 import matplotlib.pyplot as plt
@@ -55,6 +55,9 @@ class MainWindow(QtGui.QMainWindow):
         bining_act = QtGui.QAction('Bining atribut', self)
         bining_act.triggered.connect(self.show_bining)
         
+        derive_act = QtGui.QAction('Penurunan atribut', self)
+        derive_act.triggered.connect(self.derive_attribute)
+        
         self.seg_action = QtGui.QAction('Proses', self)
         self.seg_action.setShortcut('F5')
         self.seg_action.setStatusTip('Jalankan proses segmentasi')
@@ -79,6 +82,7 @@ class MainWindow(QtGui.QMainWindow):
         preprocess_menu = menubar.addMenu('&Preprocessing')
         preprocess_menu.addMenu(miss_value_action)
         preprocess_menu.addAction(bining_act)
+        preprocess_menu.addAction(derive_act)
         segmen_menu = menubar.addMenu('&Segmentasi')
         segmen_menu.addAction(self.seg_action)
         result_menu = menubar.addMenu('&Hasil Segmentasi')
@@ -159,7 +163,7 @@ class MainWindow(QtGui.QMainWindow):
         self.imp.exec_()
         if self.imp.display_table:
             if not self.imp.selected_col:
-                print("Tidak ada kolom dipilih!") #Seharusnya tampilkan dalam dialog
+                print("Tidak ada atribut dipilih!") #Seharusnya tampilkan dalam dialog
             else:
                 self.display_raw_data(self.imp.df_selected_data)
                 
@@ -217,10 +221,20 @@ class MainWindow(QtGui.QMainWindow):
         self.bin.exec_()
         if self.bin.display_table:
             if not self.bin.selected_col:
-                print("Tidak ada kolom dipilih!") #Seharusnya tampilkan dalam dialog
+                print("Tidak ada atribut dipilih!") #Seharusnya tampilkan dalam dialog
             else:
                 self.display_raw_data(self.bin.data)
-         
+    
+    def derive_attribute(self):
+        self.derv = DeriveAttribute()
+        self.derv.add_attribute_to_list(self.ready_data)
+        self.derv.exec_()
+        if self.derv.display_table:
+            if not self.derv.selected_col:
+                print("Tidak ada atribut dipilih!") #Seharusnya tampilkan dalam dialog
+            else:
+                self.display_raw_data(self.derv.data)
+        
     def segmen_customer(self):
         self.sgm = Segmentation(self.ready_data)
         self.sgm
