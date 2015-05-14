@@ -7,6 +7,7 @@
 
 from PyQt4 import QtGui
 from RawData import RawData
+from Preprocessing import Bining
 from Segmentation import Segmentation
 from About import About
 import matplotlib.pyplot as plt
@@ -51,6 +52,9 @@ class MainWindow(QtGui.QMainWindow):
         miss_value_action.addAction(fill_zero_act)
         miss_value_action.addAction(delete_row_act)
         
+        bining_act = QtGui.QAction('Bining atribut', self)
+        bining_act.triggered.connect(self.show_bining)
+        
         self.seg_action = QtGui.QAction('Proses', self)
         self.seg_action.setShortcut('F5')
         self.seg_action.setStatusTip('Jalankan proses segmentasi')
@@ -74,6 +78,7 @@ class MainWindow(QtGui.QMainWindow):
         data_menu.addAction(exit_action)
         preprocess_menu = menubar.addMenu('&Preprocessing')
         preprocess_menu.addMenu(miss_value_action)
+        preprocess_menu.addAction(bining_act)
         segmen_menu = menubar.addMenu('&Segmentasi')
         segmen_menu.addAction(self.seg_action)
         result_menu = menubar.addMenu('&Hasil Segmentasi')
@@ -154,10 +159,8 @@ class MainWindow(QtGui.QMainWindow):
         self.imp.exec_()
         if self.imp.display_table:
             if not self.imp.selected_col:
-                self.imp.get_selected_column()
                 print("Tidak ada kolom dipilih!") #Seharusnya tampilkan dalam dialog
             else:
-                self.imp.import_selected_data()
                 self.display_raw_data(self.imp.df_selected_data)
                 
                 # Set to Tab 1
@@ -207,7 +210,17 @@ class MainWindow(QtGui.QMainWindow):
         self.imp.count_stats(self.df_clean_data)
         self.txt_stats.setText(self.imp.stats)
         self.display_raw_data(self.df_clean_data)
-     
+    
+    def show_bining(self):
+        self.bin = Bining()
+        self.bin.add_attribute_to_list(self.ready_data)
+        self.bin.exec_()
+        if self.bin.display_table:
+            if not self.bin.selected_col:
+                print("Tidak ada kolom dipilih!") #Seharusnya tampilkan dalam dialog
+            else:
+                self.display_raw_data(self.bin.data)
+         
     def segmen_customer(self):
         self.sgm = Segmentation(self.ready_data)
         self.sgm

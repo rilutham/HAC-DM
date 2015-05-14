@@ -74,7 +74,7 @@ class RawData(QtGui.QDialog):
     
     def get_selected_column(self):
         '''
-        a
+        get selected column
         '''
         # list of selected column
         #self.selected_col = []
@@ -107,12 +107,11 @@ class RawData(QtGui.QDialog):
         self.missing_row_num = data.shape[0] - data.dropna().shape[0]
         self.missing_num = data.isnull().values.ravel().sum()
         self.missing_percent = (self.missing_num * 100) / self.row_num
-        print self.missing_percent
         self.stats = "Nama file: {0}\nJumlah kolom: {1}\nJumlah baris: {2}\nNilai kosong: {3} ({4}%)\nBaris dengan nilai kosong: {5}".format(self.data_name,self.col_num,self.row_num,self.missing_num,self.missing_percent,self.missing_row_num)
-    
+
     def close_dialog(self):
         '''
-        d
+        close dialog
         '''
         # State of displaying data on MainWindow
         self.display_table = False
