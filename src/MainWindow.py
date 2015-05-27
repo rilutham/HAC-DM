@@ -171,6 +171,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.tabs.setCurrentWidget(self.tab1)
                 
                 # Close widget in another tab
+		self.treshold_frame.hide()
                 self.canvas_for_dendrogram.hide()
                 self.toolbar.hide()
                 self.result_data_table.hide()
@@ -202,6 +203,7 @@ class MainWindow(QtGui.QMainWindow):
         return self.ready_data
     
     def fill_with_zero(self):
+	self.tabs.setCurrentWidget(self.tab1)
         self.df_clean_data = self.imp.df_selected_data.fillna(0)
         # Count data statistics
         self.imp.count_stats(self.df_clean_data)
@@ -209,6 +211,7 @@ class MainWindow(QtGui.QMainWindow):
         self.display_raw_data(self.df_clean_data)
     
     def delete_missing_row(self):
+	self.tabs.setCurrentWidget(self.tab1)
         self.df_clean_data = self.imp.df_selected_data.dropna(axis=0)
         # Count data statistics
         self.imp.count_stats(self.df_clean_data)
@@ -216,6 +219,7 @@ class MainWindow(QtGui.QMainWindow):
         self.display_raw_data(self.df_clean_data)
     
     def show_bining(self):
+	self.tabs.setCurrentWidget(self.tab1)
         self.bin = Bining()
         self.bin.add_attribute_to_list(self.ready_data)
         self.bin.exec_()
@@ -226,6 +230,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.display_raw_data(self.bin.data)
     
     def derive_attribute(self):
+	self.tabs.setCurrentWidget(self.tab1)
         self.derv = DeriveAttribute()
         self.derv.add_attribute_to_list(self.ready_data)
         self.derv.exec_()
@@ -241,6 +246,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Set Tab 2 and Tab 3
         self.tabs.addTab(self.tab2, "Visualisasi Model")
+	self.treshold_frame.show()
         self.canvas_for_dendrogram.show()
         self.toolbar.show()
         self.tabs.addTab(self.tab3, "Data Hasil Segmentasi")
@@ -300,4 +306,3 @@ class MainWindow(QtGui.QMainWindow):
         left = (desktop_size.width()/2)-(size.width()/2)
         top = (desktop_size.height()/2)-(size.height()/2)
         self.move(left, top)
-        

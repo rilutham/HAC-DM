@@ -115,13 +115,6 @@ class DeriveAttribute(QtGui.QDialog):
         txt_select = QtGui.QLabel('Silahkan pilih atribut!', self)
         # ListWidget for display data column
         self.v_list = QtGui.QListWidget()
-        txt_n_bin = QtGui.QLabel('Jumlah atribut baru: ', self)
-        self.n_bin_edit = QtGui.QLineEdit()
-        self.bin_frame = QtGui.QFrame()
-        self.bin_layout = QtGui.QHBoxLayout()
-        self.bin_frame.setLayout(self.bin_layout)
-        self.bin_layout.addWidget(txt_n_bin)
-        self.bin_layout.addWidget(self.n_bin_edit)
         # button_box
         button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.get_selected_column)
@@ -130,7 +123,6 @@ class DeriveAttribute(QtGui.QDialog):
         self.layout_vertical = QtGui.QVBoxLayout(self)
         self.layout_vertical.addWidget(txt_select)
         self.layout_vertical.addWidget(self.v_list)
-        self.layout_vertical.addWidget(self.bin_frame)
         self.layout_vertical.addWidget(button_box)
     
     def add_attribute_to_list(self, data):
