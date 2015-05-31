@@ -109,12 +109,16 @@ class MainWindow(QtGui.QMainWindow):
         self.stat_frame = QtGui.QFrame()
         self.frame_layout = QtGui.QHBoxLayout()
         self.stat_frame.setLayout(self.frame_layout)
+        self.txt_table_exist = QtGui.QLabel("""Tidak ada data yang ditampilkan\n
+Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
+        self.txt_table_exist.setStyleSheet("color: gray; font: italic;")
         self.txt_stats = QtGui.QLabel('', self)
-        self.txt_stats.setStyleSheet("font-size: 10pt; font-weight: bold; ")
+        self.txt_stats.setStyleSheet("font-size: 10pt; font: bold; ")
         self.frame_layout.addWidget(self.txt_stats)
         
         self.raw_data_table = QtGui.QTableWidget(self)
         self.v_box_layout_1 = QtGui.QVBoxLayout()
+        self.v_box_layout_1.addWidget(self.txt_table_exist)
         self.v_box_layout_1.addWidget(self.stat_frame)
         self.v_box_layout_1.addWidget(self.raw_data_table)
         self.raw_data_table.hide()
@@ -157,13 +161,19 @@ class MainWindow(QtGui.QMainWindow):
         self.central_widget.setLayout(self.main_layout)
         # set central widget
         self.setCentralWidget(self.central_widget)
+    
+    
         
     def show_import(self):
         self.imp = RawData()
         self.imp.exec_()
         if self.imp.display_table:
             if not self.imp.selected_col:
-                print("Tidak ada atribut dipilih!") #Seharusnya tampilkan dalam dialog
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setText("Tidak ada atribut yang dipilih!")
+                msgBox.setInformativeText("Silahkan pilih minimal 2 atribut")
+                msgBox.setIcon(2)
+                msgBox.exec_()
             else:
                 self.display_raw_data(self.imp.df_selected_data)
                 
@@ -171,7 +181,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.tabs.setCurrentWidget(self.tab1)
                 
                 # Close widget in another tab
-		self.treshold_frame.hide()
+                self.treshold_frame.hide()
                 self.canvas_for_dendrogram.hide()
                 self.toolbar.hide()
                 self.result_data_table.hide()
@@ -183,6 +193,7 @@ class MainWindow(QtGui.QMainWindow):
                 # Count data statistics
                 self.imp.count_stats(self.imp.df_selected_data)
                 self.txt_stats.setText(self.imp.stats)
+                self.txt_table_exist.hide()
                 self.raw_data_table.show() 
                 self.figure.clf()      
     
@@ -203,23 +214,35 @@ class MainWindow(QtGui.QMainWindow):
         return self.ready_data
     
     def fill_with_zero(self):
-	self.tabs.setCurrentWidget(self.tab1)
-        self.df_clean_data = self.imp.df_selected_data.fillna(0)
-        # Count data statistics
-        self.imp.count_stats(self.df_clean_data)
-        self.txt_stats.setText(self.imp.stats)
-        self.display_raw_data(self.df_clean_data)
+        self.tabs.setCurrentWidget(self.tab1)
+        if self.imp.missing_row_num == 0:
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setText("Tidak terdapat data kosong!")
+            msgBox.setIcon(2)
+            msgBox.exec_()
+        elif self.imp.missing_row_num > 0:
+            self.df_clean_data = self.imp.df_selected_data.fillna(0)
+            # Count data statistics
+            self.imp.count_stats(self.df_clean_data)
+            self.txt_stats.setText(self.imp.stats)
+            self.display_raw_data(self.df_clean_data)
     
     def delete_missing_row(self):
-	self.tabs.setCurrentWidget(self.tab1)
-        self.df_clean_data = self.imp.df_selected_data.dropna(axis=0)
-        # Count data statistics
-        self.imp.count_stats(self.df_clean_data)
-        self.txt_stats.setText(self.imp.stats)
-        self.display_raw_data(self.df_clean_data)
+        self.tabs.setCurrentWidget(self.tab1)
+        if self.imp.missing_row_num == 0:
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setText("Tidak terdapat data kosong!")
+            msgBox.setIcon(2)
+            msgBox.exec_()
+        elif self.imp.missing_row_num > 0:  
+            self.df_clean_data = self.imp.df_selected_data.dropna(axis=0)
+            # Count data statistics
+            self.imp.count_stats(self.df_clean_data)
+            self.txt_stats.setText(self.imp.stats)
+            self.display_raw_data(self.df_clean_data)
     
     def show_bining(self):
-	self.tabs.setCurrentWidget(self.tab1)
+        self.tabs.setCurrentWidget(self.tab1)
         self.bin = Bining()
         self.bin.add_attribute_to_list(self.ready_data)
         self.bin.exec_()
@@ -230,7 +253,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.display_raw_data(self.bin.data)
     
     def derive_attribute(self):
-	self.tabs.setCurrentWidget(self.tab1)
+        self.tabs.setCurrentWidget(self.tab1)
         self.derv = DeriveAttribute()
         self.derv.add_attribute_to_list(self.ready_data)
         self.derv.exec_()
@@ -246,7 +269,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Set Tab 2 and Tab 3
         self.tabs.addTab(self.tab2, "Visualisasi Model")
-	self.treshold_frame.show()
+        self.treshold_frame.show()
         self.canvas_for_dendrogram.show()
         self.toolbar.show()
         self.tabs.addTab(self.tab3, "Data Hasil Segmentasi")

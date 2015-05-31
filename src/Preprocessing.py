@@ -188,3 +188,4 @@ class DeriveAttribute(QtGui.QDialog):
         self.display_table = False
         # Signal
         self.reject()
+

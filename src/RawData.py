@@ -91,6 +91,7 @@ class RawData(QtGui.QDialog):
         '''
         Import data with the selected column
         '''
+              
         self.selected_data = pd.read_csv(str(self.file), header=0, index_col=False, \
                                           usecols=self.selected_col)
         # Insert data to DataFrame
