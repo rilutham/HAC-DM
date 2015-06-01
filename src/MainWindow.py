@@ -105,19 +105,23 @@ class MainWindow(QtGui.QMainWindow):
         self.tab3 = QtGui.QWidget()
 
         self.tabs.addTab(self.tab1, "Pengolahan Data")
+
         # Setting Tab 1
         self.stat_frame = QtGui.QFrame()
-        self.frame_layout = QtGui.QHBoxLayout()
-        self.stat_frame.setLayout(self.frame_layout)
+        self.stat_frame.setMaximumWidth(250)
+        self.stat_layout = QtGui.QVBoxLayout()
+        self.stat_frame.setLayout(self.stat_layout)
+        self.txt_data_detail = QtGui.QLabel("Rincian Data:")
+        self.txt_data_detail.setStyleSheet("font: bold; ")
+        self.txt_stats = QtGui.QLabel('', self)
+        self.stat_layout.insertWidget(0,self.txt_data_detail)
+        self.stat_layout.insertWidget(1,self.txt_stats)
+
         self.txt_table_exist = QtGui.QLabel("""Tidak ada data yang ditampilkan.\n
 Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
         self.txt_table_exist.setStyleSheet("color: gray; font: italic;")
-        self.txt_stats = QtGui.QLabel('', self)
-        self.txt_stats.setStyleSheet("font-size: 10pt; font: bold; ")
-        self.frame_layout.addWidget(self.txt_stats)
-        
         self.raw_data_table = QtGui.QTableWidget(self)
-        self.v_box_layout_1 = QtGui.QVBoxLayout()
+        self.v_box_layout_1 = QtGui.QHBoxLayout()
         self.v_box_layout_1.addWidget(self.txt_table_exist)
         self.v_box_layout_1.addWidget(self.stat_frame)
         self.v_box_layout_1.addWidget(self.raw_data_table)
@@ -142,6 +146,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.treshold_layout.addWidget(self.txt_set_distance)
         self.treshold_layout.addWidget(self.treshold_edit)
         self.treshold_layout.addWidget(self.btn_treshold)
+        #self.treshold_layout.addWidget(self.txt_n_cluster)
         self.v_box_layout_2 = QtGui.QVBoxLayout()
         self.v_box_layout_2.addWidget(self.txt_visual_exist)
         self.v_box_layout_2.addWidget(self.treshold_frame)
@@ -156,9 +161,35 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
 Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
         self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
+
+        self.txt_summary = QtGui.QLabel("Hasil Segmentasi Pelanggan", self)
+        self.txt_summary.setStyleSheet("font: bold;")
+        self.txt_n_cluster = QtGui.QLabel('',self)
+        self.cluster_list = QtGui.QListWidget()
+        self.cluster_list.setMaximumHeight(250)
+        self.txt_note = QtGui.QLabel("Keterangan Tabel: ", self)
+        self.txt_note.setStyleSheet("font: bold")
+        self.txt_label = QtGui.QLabel("Label", self)
+        self.txt_label.setStyleSheet("background-color:#dadfe1; color:black")
+        self.txt_id_segmen = QtGui.QLabel("ID Segmen", self)
+        self.txt_id_segmen.setStyleSheet("background-color: #19B5FE; color:black;")
+        self.summary_frame = QtGui.QFrame()
+        self.summary_layout = QtGui.QVBoxLayout()
+        self.summary_frame.setMaximumWidth(250)
+        self.summary_frame.setMaximumHeight(375)
+        self.summary_frame.setLayout(self.summary_layout)
+        self.summary_layout.addWidget(self.txt_summary)
+        self.summary_layout.addWidget(self.txt_n_cluster)
+        self.summary_layout.addWidget(self.cluster_list)
+        self.summary_layout.addWidget(self.txt_note)
+        self.summary_layout.addWidget(self.txt_label)
+        self.summary_layout.addWidget(self.txt_id_segmen)
+        self.summary_frame.hide()
+
         self.result_data_table = QtGui.QTableWidget(self) 
-        self.v_box_layout_3 = QtGui.QVBoxLayout()
+        self.v_box_layout_3 = QtGui.QHBoxLayout()
         self.v_box_layout_3.addWidget(self.txt_result_exist)
+        self.v_box_layout_3.addWidget(self.summary_frame)
         self.v_box_layout_3.addWidget(self.result_data_table)
         self.result_data_table.hide()
         
@@ -214,7 +245,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.treshold_frame.hide()
                 self.canvas_for_dendrogram.hide()
                 self.toolbar.hide()
-                self.figure.clf() 
+                self.figure.clf()
+                self.summary_frame.hide()
                 self.result_data_table.hide()
                     
                 # Enable/ disable some menu
@@ -235,7 +267,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         # Color first column
         for i in range(len(self.ready_data.index)):
             for j in range(len(self.ready_data.columns)):
-                self.raw_data_table.item(i,0).setBackground(QtGui.QColor(229,229,229))
+                self.raw_data_table.item(i,0).setBackground(QtGui.QColor(218,223,225))
                 
         # Create the columns header
         self.raw_data_table.setHorizontalHeaderLabels(list(self.ready_data.columns.values))
@@ -284,7 +316,11 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.bin.exec_()
         if self.bin.display_table:
             if not self.bin.selected_col:
-                print("Tidak ada atribut dipilih!") #Seharusnya tampilkan dalam dialog
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setText("Tidak ada atribut yang dipilih!")
+                msgBox.setInformativeText("Silahkan pilih atribut")
+                msgBox.setIcon(2)
+                msgBox.exec_()
             else:
                 self.display_raw_data(self.bin.data)
     
@@ -310,12 +346,17 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.sgm
             
             # Set Tab 2 and Tab 3
+            self.summary_frame.show()
+            self.txt_n_cluster.setText(self.sgm.n_cluster)
             self.txt_visual_exist.hide()
             self.treshold_frame.show()
             self.canvas_for_dendrogram.show()
             self.toolbar.show()
             self.txt_result_exist.hide()
             self.result_data_table.show()
+
+
+            self.show_result_summary()
             
             # Draw dendrogram on canvas
             self.canvas_for_dendrogram.draw()
@@ -325,13 +366,24 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.display_result_data(self.sgm.df_result_data)
             # Enable some menu item
             self.save_result_action.setEnabled(True)
-        
+
+    def show_result_summary(self):
+        self.cluster_list.clear()
+        # Segment result summary
+        for x in self.sgm.summary_list:
+            self.item = QtGui.QListWidgetItem(x)
+            self.cluster_list.addItem(self.item)
+
     def set_treshold(self):
         self.figure.clf()
         self.treshold_text = str(self.treshold_edit.text())
         self.treshold_value = float(self.treshold_text)
         self.sgm.refresh_result_data(self.treshold_value)
-        
+
+        self.txt_n_cluster.setText(self.sgm.n_cluster)
+
+        self.show_result_summary()
+
         # Draw dendrogram on canvas
         self.canvas_for_dendrogram.draw()
         # Set to Tab 2
@@ -353,8 +405,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         # Color first column
         for i in range(len(data.index)):
             for j in range(len(data.columns)):
-                self.result_data_table.item(i,0).setBackground(QtGui.QColor(229,229,229))
-                self.result_data_table.item(i,len(data.columns)-1).setBackground(QtGui.QColor(0,255,0))
+                self.result_data_table.item(i,0).setBackground(QtGui.QColor(218,223,225))
+                self.result_data_table.item(i,len(data.columns)-1).setBackground(QtGui.QColor(25,181,254))
         
         
                 

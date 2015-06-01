@@ -66,18 +66,29 @@ class Bining(QtGui.QDialog):
         get selected column
         '''
         # selected column
+        self.selected_col = None
         for i in self.v_list.selectedItems():
             self.selected_col = str(i.text())
-        
-        self.n_bin = str(self.n_bin_edit.text())
-        if self.n_bin == '2':
+        # Number of bin from user input
+        self.n_bin = int(self.n_bin_edit.text())
+        # Do binning
+        bins = []
+        if self.n_bin == 2:
             bins = [0, min(self.data[self.selected_col]), max(self.data[self.selected_col])]
             group_names = ['1','2']
-        elif self.n_bin == '3':
+        elif self.n_bin == 3:
             bins = [0, min(self.data[self.selected_col]), 2, max(self.data[self.selected_col])]
             group_names = ['1','2','3']
-        self.data[self.selected_col] = pd.cut(self.data[self.selected_col], bins, labels=group_names)
-        
+        elif (self.n_bin < 2 or self.n_bin > 3):
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setText("Jumlah bin tidak diizinkan.")
+            msgBox.setInformativeText("Silahkan masukkan jumlah bin yang sesuai!")
+            msgBox.setIcon(2)
+            msgBox.exec_()
+
+        # Add new value to attribute
+        if bins:
+            self.data[self.selected_col] = pd.cut(self.data[self.selected_col], bins, labels=group_names)
         # State of displaying data on MainWindow
         self.display_table = True
         # Signal

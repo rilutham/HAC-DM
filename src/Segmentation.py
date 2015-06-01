@@ -9,6 +9,8 @@ from PyQt4 import QtGui
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from scipy.stats import itemfreq
+
 
 class Segmentation(QtGui.QWidget):
     '''
@@ -49,7 +51,16 @@ class Segmentation(QtGui.QWidget):
         cluster_index = fcluster(self.row_clusters, t=2, criterion='maxclust')
         # Add new column (cluster_index) to result data
         self.df_result_data['ID_Segmen'] = cluster_index
-  
+
+        self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(cluster_index))
+
+        freq_of_cluster = dict(itemfreq(cluster_index))
+        self.summary_list = []
+        for key, val in freq_of_cluster.items():
+            isi = "Segmen ke-{0}: {1} pelanggan".format(key,val)
+            self.summary_list.append(isi)
+        print self.summary_list
+
     def refresh_result_data(self, treshold):
         # Generate dendrogram and labels
         dendrogram(self.row_clusters, color_threshold=treshold ,labels = self.dendro_label.values)
@@ -59,4 +70,12 @@ class Segmentation(QtGui.QWidget):
         cluster_index = fcluster(self.row_clusters, t=treshold, criterion='distance')
         # Add new column (cluster_index) to result data
         self.df_result_data['ID_Segmen'] = cluster_index
+
+        freq_of_cluster = dict(itemfreq(cluster_index))
+        self.summary_list = []
+        for key, val in freq_of_cluster.items():
+            isi = "Segmen ke-{0}: {1} pelanggan".format(key,val)
+            self.summary_list.append(isi)
+        print self.summary_list
+        self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(cluster_index))
         
