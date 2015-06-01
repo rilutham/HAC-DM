@@ -109,7 +109,7 @@ class MainWindow(QtGui.QMainWindow):
         self.stat_frame = QtGui.QFrame()
         self.frame_layout = QtGui.QHBoxLayout()
         self.stat_frame.setLayout(self.frame_layout)
-        self.txt_table_exist = QtGui.QLabel("""Tidak ada data yang ditampilkan\n
+        self.txt_table_exist = QtGui.QLabel("""Tidak ada data yang ditampilkan.\n
 Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
         self.txt_table_exist.setStyleSheet("color: gray; font: italic;")
         self.txt_stats = QtGui.QLabel('', self)
@@ -121,9 +121,14 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
         self.v_box_layout_1.addWidget(self.txt_table_exist)
         self.v_box_layout_1.addWidget(self.stat_frame)
         self.v_box_layout_1.addWidget(self.raw_data_table)
+        self.stat_frame.hide()
         self.raw_data_table.hide()
         
         # Setting Tab 2
+        self.tabs.addTab(self.tab2, "Visualisasi Model")
+        self.txt_visual_exist = QtGui.QLabel("""Tidak ada visualisasi model yang ditampilkan.\n
+Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses""", self)
+        self.txt_visual_exist.setStyleSheet("color: gray; font: italic;")
         self.txt_set_distance = QtGui.QLabel('Masukkan jarak potong dendrogram: ', self)
         self.treshold_edit = QtGui.QLineEdit()
         self.btn_treshold = QtGui.QPushButton("Submit", self)
@@ -138,14 +143,24 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
         self.treshold_layout.addWidget(self.treshold_edit)
         self.treshold_layout.addWidget(self.btn_treshold)
         self.v_box_layout_2 = QtGui.QVBoxLayout()
+        self.v_box_layout_2.addWidget(self.txt_visual_exist)
         self.v_box_layout_2.addWidget(self.treshold_frame)
         self.v_box_layout_2.addWidget(self.canvas_for_dendrogram)
         self.v_box_layout_2.addWidget(self.toolbar)
+        self.treshold_frame.hide()
+        self.canvas_for_dendrogram.hide()
+        self.toolbar.hide()
         
         # Setting Tab 3
+        self.tabs.addTab(self.tab3, "Data Hasil Segmentasi")
+        self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
+Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
+        self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
         self.result_data_table = QtGui.QTableWidget(self) 
         self.v_box_layout_3 = QtGui.QVBoxLayout()
+        self.v_box_layout_3.addWidget(self.txt_result_exist)
         self.v_box_layout_3.addWidget(self.result_data_table)
+        self.result_data_table.hide()
         
         #Set Layout for each tab
         self.tab1.setLayout(self.v_box_layout_1)
@@ -167,36 +182,45 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
     def show_import(self):
         self.imp = RawData()
         self.imp.exec_()
-        if self.imp.display_table:
-            if not self.imp.selected_col:
+        if self.imp.display_table == True:
+            if len(self.imp.selected_col) == 0:
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setText("Tidak ada atribut yang dipilih!")
+                msgBox.setInformativeText("Silahkan pilih minimal 2 atribut")
+                msgBox.setIcon(2)
+                msgBox.exec_()
+            elif len(self.imp.selected_col) == 1:
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setText("Hanya satu atribut yang dipilih!")
                 msgBox.setInformativeText("Silahkan pilih minimal 2 atribut")
                 msgBox.setIcon(2)
                 msgBox.exec_()
             else:
                 self.display_raw_data(self.imp.df_selected_data)
                 
-                # Set to Tab 1
-                self.tabs.setCurrentWidget(self.tab1)
-                
-                # Close widget in another tab
-                self.treshold_frame.hide()
-                self.canvas_for_dendrogram.hide()
-                self.toolbar.hide()
-                self.result_data_table.hide()
-                
-                # Enable/ disable some menu
-                self.seg_action.setEnabled(True)
-                self.save_result_action.setEnabled(False)
-                
                 # Count data statistics
                 self.imp.count_stats(self.imp.df_selected_data)
                 self.txt_stats.setText(self.imp.stats)
-                self.txt_table_exist.hide()
+                
+                # Set to Tab 1
+                self.tabs.setCurrentWidget(self.tab1)
+                self.stat_frame.show()
                 self.raw_data_table.show() 
-                self.figure.clf()      
-    
+                self.txt_visual_exist.show()
+                self.txt_result_exist.show()
+                
+                # Close widget
+                self.txt_table_exist.hide()
+                self.treshold_frame.hide()
+                self.canvas_for_dendrogram.hide()
+                self.toolbar.hide()
+                self.figure.clf() 
+                self.result_data_table.hide()
+                    
+                # Enable/ disable some menu
+                self.seg_action.setEnabled(True)
+                self.save_result_action.setEnabled(False)
+
     def display_raw_data(self, data):
         self.ready_data = data   
         # Specify the number of rows and columns of table
@@ -208,9 +232,14 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
             for j in range(len(self.ready_data.columns)):
                 self.raw_data_table.setItem(i, j, QtGui.QTableWidgetItem(str(self.ready_data.iget_value(i, j))))
         
+        # Color first column
+        for i in range(len(self.ready_data.index)):
+            for j in range(len(self.ready_data.columns)):
+                self.raw_data_table.item(i,0).setBackground(QtGui.QColor(229,229,229))
+                
         # Create the columns header
         self.raw_data_table.setHorizontalHeaderLabels(list(self.ready_data.columns.values))
-        
+
         return self.ready_data
     
     def fill_with_zero(self):
@@ -229,18 +258,25 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
     
     def delete_missing_row(self):
         self.tabs.setCurrentWidget(self.tab1)
-        if self.imp.missing_row_num == 0:
-            msgBox = QtGui.QMessageBox(self)
-            msgBox.setText("Tidak terdapat data kosong!")
-            msgBox.setIcon(2)
-            msgBox.exec_()
-        elif self.imp.missing_row_num > 0:  
-            self.df_clean_data = self.imp.df_selected_data.dropna(axis=0)
-            # Count data statistics
-            self.imp.count_stats(self.df_clean_data)
-            self.txt_stats.setText(self.imp.stats)
-            self.display_raw_data(self.df_clean_data)
-    
+        msgBox = QtGui.QMessageBox(self)
+        msgBox.setInformativeText("Apakah Anda yakin untuk menghapus data kosong?")
+        msgBox.setIcon(4)
+        msgBox.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+        ret = msgBox.exec_()
+        if ret == QtGui.QMessageBox.Ok:
+            #Save was clicked
+            if self.imp.missing_row_num == 0:
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setText("Tidak terdapat data kosong!")
+                msgBox.setIcon(2)
+                msgBox.exec_()
+            elif self.imp.missing_row_num > 0:  
+                self.df_clean_data = self.imp.df_selected_data.dropna(axis=0)
+                # Count data statistics
+                self.imp.count_stats(self.df_clean_data)
+                self.txt_stats.setText(self.imp.stats)
+                self.display_raw_data(self.df_clean_data)
+        
     def show_bining(self):
         self.tabs.setCurrentWidget(self.tab1)
         self.bin = Bining()
@@ -264,25 +300,31 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
                 self.display_raw_data(self.derv.data)
         
     def segmen_customer(self):
-        self.sgm = Segmentation(self.ready_data)
-        self.sgm
-        
-        # Set Tab 2 and Tab 3
-        self.tabs.addTab(self.tab2, "Visualisasi Model")
-        self.treshold_frame.show()
-        self.canvas_for_dendrogram.show()
-        self.toolbar.show()
-        self.tabs.addTab(self.tab3, "Data Hasil Segmentasi")
-        self.result_data_table.show()
-        
-        # Draw dendrogram on canvas
-        self.canvas_for_dendrogram.draw()
-        # Set to Tab 2
-        self.tabs.setCurrentWidget(self.tab2)
-        # Display result data in QTableWidget
-        self.display_result_data(self.sgm.df_result_data)
-        # Enable some menu item
-        self.save_result_action.setEnabled(True)
+        if self.imp.missing_num > 0:
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setText("Masih terdapat data kosong!")
+            msgBox.setIcon(3)
+            msgBox.exec_()
+        elif self.imp.missing_num == 0:
+            self.sgm = Segmentation(self.ready_data)
+            self.sgm
+            
+            # Set Tab 2 and Tab 3
+            self.txt_visual_exist.hide()
+            self.treshold_frame.show()
+            self.canvas_for_dendrogram.show()
+            self.toolbar.show()
+            self.txt_result_exist.hide()
+            self.result_data_table.show()
+            
+            # Draw dendrogram on canvas
+            self.canvas_for_dendrogram.draw()
+            # Set to Tab 2
+            self.tabs.setCurrentWidget(self.tab2)
+            # Display result data in QTableWidget
+            self.display_result_data(self.sgm.df_result_data)
+            # Enable some menu item
+            self.save_result_action.setEnabled(True)
         
     def set_treshold(self):
         self.figure.clf()
@@ -308,6 +350,14 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
                 self.result_data_table.setItem\
                 (i, j, QtGui.QTableWidgetItem(str(data.iget_value(i, j))))
         
+        # Color first column
+        for i in range(len(data.index)):
+            for j in range(len(data.columns)):
+                self.result_data_table.item(i,0).setBackground(QtGui.QColor(229,229,229))
+                self.result_data_table.item(i,len(data.columns)-1).setBackground(QtGui.QColor(0,255,0))
+        
+        
+                
         # Create the columns header
         self.result_data_table.setHorizontalHeaderLabels(list(data.columns.values))
     

@@ -28,7 +28,6 @@ class Segmentation(QtGui.QWidget):
         self.dist_data = self.data.ix[:, 1:self.n_cols]
         self.dendro_label = self.data.ix[0:n_rows, 0:1]
         self.df_result_data = None
-        
         # Call initial methods
         self.count_distance()
         self.do_segmentation()
@@ -50,8 +49,7 @@ class Segmentation(QtGui.QWidget):
         cluster_index = fcluster(self.row_clusters, t=2, criterion='maxclust')
         # Add new column (cluster_index) to result data
         self.df_result_data['ID_Segmen'] = cluster_index
-        
-           
+  
     def refresh_result_data(self, treshold):
         # Generate dendrogram and labels
         dendrogram(self.row_clusters, color_threshold=treshold ,labels = self.dendro_label.values)

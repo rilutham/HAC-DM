@@ -28,6 +28,8 @@ class RawData(QtGui.QDialog):
         self.move(left, top)
         # Qlabel for instruction.
         txt_select = QtGui.QLabel('Silahkan pilih atribut yang akan digunakan!', self)
+        txt_label = QtGui.QLabel('* Atribut pertama yang dipilih akan digunakan sebagai label', self)
+        txt_label.setStyleSheet("color: gray; font: italic;")
         # ListWidget for display data column
         self.v_list = QtGui.QListWidget()
         self.v_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
@@ -39,6 +41,7 @@ class RawData(QtGui.QDialog):
         # Displaying the widget
         self.layout_vertical = QtGui.QVBoxLayout(self)
         self.layout_vertical.addWidget(txt_select)
+        self.layout_vertical.addWidget(txt_label)
         self.layout_vertical.addWidget(self.v_list)
         self.layout_vertical.addWidget(button_box)
         # list of selected column
@@ -71,7 +74,7 @@ class RawData(QtGui.QDialog):
             self.v_list.addItem(self.item)
             self.item.setFlags(self.item.flags() | QtCore.Qt.ItemIsUserCheckable)
             self.item.setCheckState(QtCore.Qt.Checked)
-    
+
     def get_selected_column(self):
         '''
         get selected column
@@ -107,8 +110,8 @@ class RawData(QtGui.QDialog):
         self.row_num = len(data.index)
         self.missing_row_num = data.shape[0] - data.dropna().shape[0]
         self.missing_num = data.isnull().values.ravel().sum()
-        self.missing_percent = (self.missing_num * 100) / self.row_num
-        self.stats = "Nama file: {0}\nJumlah kolom: {1}\nJumlah baris: {2}\nNilai kosong: {3} ({4}%)\nBaris dengan nilai kosong: {5}".format(self.data_name,self.col_num,self.row_num,self.missing_num,self.missing_percent,self.missing_row_num)
+        self.missing_percent = (self.missing_row_num * 100) / self.row_num
+        self.stats = "Lokasi file: {0}\nJumlah kolom: {1}\nJumlah baris: {2}\nNilai kosong: {3}\nBaris dengan nilai kosong: {4} ({5}%)".format(self.data_name,self.col_num,self.row_num,self.missing_num,self.missing_row_num,self.missing_percent)
 
     def close_dialog(self):
         '''
