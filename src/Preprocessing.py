@@ -69,6 +69,8 @@ class Bining(QtGui.QDialog):
         self.selected_col = None
         for i in self.v_list.selectedItems():
             self.selected_col = str(i.text())
+        
+        print self.selected_col
         # Number of bin from user input
         self.n_bin = int(self.n_bin_edit.text())
         # Do binning
@@ -157,9 +159,10 @@ class DeriveAttribute(QtGui.QDialog):
         # selected column
         for i in self.v_list.selectedItems():
             self.selected_col = str(i.text())
-        
+        print("da {0}".format(self.selected_col))
         # Count number of possible value for each column
         unique_value = self.data.groupby(self.selected_col).count()
+        print unique_value
         unique_value_len = len(unique_value.index)
         
         # Create list for new atribut

@@ -15,12 +15,12 @@ class StartupDialog(QtGui.QDialog):
     def __init__(self):
         super(StartupDialog, self).__init__()
         self.setWindowTitle('Selamat Datang di Sistem Segmentasi Pelanggan')
-        self.resize(375, 375)
+        self.resize(370, 200)
         
         # Logo
         pic = QtGui.QLabel(self)
         pic.setGeometry(0, 0, 363, 140)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/icons/logo2.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/icons/logo3.png"))
         
         # Button
         self.btn_help = QtGui.QPushButton("Halaman Bantuan", self)
