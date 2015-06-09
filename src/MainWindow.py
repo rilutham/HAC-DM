@@ -13,6 +13,7 @@ from About import About
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+from matplotlib.pyplot import ylabel
 
 class MainWindow(QtGui.QMainWindow):
     '''
@@ -106,29 +107,50 @@ class MainWindow(QtGui.QMainWindow):
 
         self.tabs.addTab(self.tab1, "Pengolahan Data")
 
-        # Setting Tab 1
+        ### Setting Tab 1 ###
+        ## Left side
+        # Frame "data detail"
         self.stat_frame = QtGui.QFrame()
-        self.stat_frame.setMaximumWidth(250)
-        self.stat_layout = QtGui.QVBoxLayout()
-        self.stat_frame.setLayout(self.stat_layout)
+        self.stat_frame.setMaximumHeight(200)
         self.txt_data_detail = QtGui.QLabel("Rincian Data:")
         self.txt_data_detail.setStyleSheet("font: bold; ")
         self.txt_stats = QtGui.QLabel('', self)
-        self.stat_layout.insertWidget(0,self.txt_data_detail)
-        self.stat_layout.insertWidget(1,self.txt_stats)
+        self.txt_note = QtGui.QLabel("Keterangan Tabel: ", self)
+        self.txt_note.setStyleSheet("font: bold")
+        self.txt_label = QtGui.QLabel("  Label/ Meta atribut", self)
+        self.txt_label.setStyleSheet("background-color:#19B5FE; color:black")
+        # VLayout for frame "data detail"
+        self.stat_layout = QtGui.QVBoxLayout()
+        self.stat_frame.setLayout(self.stat_layout)
+        self.stat_layout.insertWidget(0, self.txt_data_detail)
+        self.stat_layout.insertWidget(1, self.txt_stats)
+        self.stat_layout.insertWidget(2, self.txt_note)
+        self.stat_layout.insertWidget(3, self.txt_label)
+        # Empty frame
+        self.empty_frame_1 = QtGui.QFrame()
+        # Left side frame in Tab 1
+        self.left_frame = QtGui.QFrame()
+        self.left_frame.setMaximumWidth(275)
+        self.left_frame.setMinimumWidth(275)
+        self.left_frame.setStyleSheet("background-color:#dadfe1; color:black")
+        self.left_side_layout = QtGui.QVBoxLayout()
+        self.left_frame.setLayout(self.left_side_layout)
+        self.left_side_layout.addWidget(self.stat_frame)
+        self.left_side_layout.addWidget(self.empty_frame_1)
 
+        ## Tab 1 layout
         self.txt_table_exist = QtGui.QLabel("""Tidak ada data yang ditampilkan.\n
 Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
         self.txt_table_exist.setStyleSheet("color: gray; font: italic;")
         self.raw_data_table = QtGui.QTableWidget(self)
         self.v_box_layout_1 = QtGui.QHBoxLayout()
         self.v_box_layout_1.addWidget(self.txt_table_exist)
-        self.v_box_layout_1.addWidget(self.stat_frame)
+        self.v_box_layout_1.addWidget(self.left_frame)
         self.v_box_layout_1.addWidget(self.raw_data_table)
-        self.stat_frame.hide()
+        self.left_frame.hide()
         self.raw_data_table.hide()
         
-        # Setting Tab 2
+        ### Setting Tab 2 ###
         self.tabs.addTab(self.tab2, "Visualisasi Model")
         self.txt_visual_exist = QtGui.QLabel("""Tidak ada visualisasi model yang ditampilkan.\n
 Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses""", self)
@@ -156,41 +178,43 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.canvas_for_dendrogram.hide()
         self.toolbar.hide()
         
-        # Setting Tab 3
+        ### Setting Tab 3 ###
         self.tabs.addTab(self.tab3, "Data Hasil Segmentasi")
         self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
 Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
         self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
 
-        self.txt_summary = QtGui.QLabel("Hasil Segmentasi Pelanggan", self)
+        self.txt_summary = QtGui.QLabel("Hasil Segmentasi Pelanggan: ", self)
         self.txt_summary.setStyleSheet("font: bold;")
         self.txt_n_cluster = QtGui.QLabel('',self)
         self.cluster_list = QtGui.QListWidget()
-        self.cluster_list.setMaximumHeight(250)
-        self.txt_note = QtGui.QLabel("Keterangan Tabel: ", self)
-        self.txt_note.setStyleSheet("font: bold")
-        self.txt_label = QtGui.QLabel("Label", self)
-        self.txt_label.setStyleSheet("background-color:#dadfe1; color:black")
-        self.txt_id_segmen = QtGui.QLabel("ID Segmen", self)
-        self.txt_id_segmen.setStyleSheet("background-color: #19B5FE; color:black;")
+        self.cluster_list.setMaximumHeight(225)
+
         self.summary_frame = QtGui.QFrame()
+        self.summary_frame.setMaximumHeight(300)
         self.summary_layout = QtGui.QVBoxLayout()
-        self.summary_frame.setMaximumWidth(250)
-        self.summary_frame.setMaximumHeight(375)
         self.summary_frame.setLayout(self.summary_layout)
-        self.summary_layout.addWidget(self.txt_summary)
-        self.summary_layout.addWidget(self.txt_n_cluster)
-        self.summary_layout.addWidget(self.cluster_list)
-        self.summary_layout.addWidget(self.txt_note)
-        self.summary_layout.addWidget(self.txt_label)
-        self.summary_layout.addWidget(self.txt_id_segmen)
-        self.summary_frame.hide()
+        self.summary_layout.insertWidget(0, self.txt_summary)
+        self.summary_layout.insertWidget(1, self.txt_n_cluster)
+        self.summary_layout.insertWidget(2, self.cluster_list)
+        # Empty frame
+        self.empty_frame_3 = QtGui.QFrame()
+        # Left side frame in Tab 3
+        self.left_frame_3 = QtGui.QFrame()
+        self.left_frame_3.setMaximumWidth(275)
+        self.left_frame_3.setMinimumWidth(275)
+        self.left_frame_3.setStyleSheet("background-color:#dadfe1; color:black")
+        self.left_side_3_layout = QtGui.QVBoxLayout()
+        self.left_frame_3.setLayout(self.left_side_3_layout)
+        self.left_side_3_layout.addWidget(self.summary_frame)
+        self.left_side_3_layout.addWidget(self.empty_frame_3)
 
         self.result_data_table = QtGui.QTableWidget(self) 
         self.v_box_layout_3 = QtGui.QHBoxLayout()
         self.v_box_layout_3.addWidget(self.txt_result_exist)
-        self.v_box_layout_3.addWidget(self.summary_frame)
+        self.v_box_layout_3.addWidget(self.left_frame_3)
         self.v_box_layout_3.addWidget(self.result_data_table)
+        self.left_frame_3.hide()
         self.result_data_table.hide()
         
         #Set Layout for each tab
@@ -235,7 +259,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 
                 # Set to Tab 1
                 self.tabs.setCurrentWidget(self.tab1)
-                self.stat_frame.show()
+                self.left_frame.show()
                 self.raw_data_table.show() 
                 self.txt_visual_exist.show()
                 self.txt_result_exist.show()
@@ -246,7 +270,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.canvas_for_dendrogram.hide()
                 self.toolbar.hide()
                 self.figure.clf()
-                self.summary_frame.hide()
+                self.left_frame_3.hide()
                 self.result_data_table.hide()
                     
                 # Enable/ disable some menu
@@ -267,7 +291,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         # Color first column
         for i in range(len(self.ready_data.index)):
             for j in range(len(self.ready_data.columns)):
-                self.raw_data_table.item(i,0).setBackground(QtGui.QColor(218,223,225))
+                self.raw_data_table.item(i,0).setBackground(QtGui.QColor(25,181,254))
                 
         # Create the columns header
         self.raw_data_table.setHorizontalHeaderLabels(list(self.ready_data.columns.values))
@@ -346,7 +370,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.sgm
             
             # Set Tab 2 and Tab 3
-            self.summary_frame.show()
+            self.left_frame_3.show()
             self.txt_n_cluster.setText(self.sgm.n_cluster)
             self.txt_visual_exist.hide()
             self.treshold_frame.show()
@@ -401,14 +425,42 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             for j in range(len(data.columns)):
                 self.result_data_table.setItem\
                 (i, j, QtGui.QTableWidgetItem(str(data.iget_value(i, j))))
+                if (self.sgm.cluster_index[i] % 10 == 1):
+                    # Green
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(177, 245, 67))
+                elif (self.sgm.cluster_index[i] % 10 == 2):
+                    # Blue
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(0, 214, 221))
+                elif (self.sgm.cluster_index[i] % 10 == 3):
+                    # Pink
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(255, 53, 139))
+                elif (self.sgm.cluster_index[i] % 10 == 4):
+                    # Yellow
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(242, 255, 46))
+                elif (self.sgm.cluster_index[i] % 10 == 5):
+                    # Fresh Orange
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(255, 94, 0))
+                elif (self.sgm.cluster_index[i] % 10 == 6):
+                    # Gray
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(151, 104, 209))
+                elif (self.sgm.cluster_index[i] % 10 == 7):
+                    # Cream
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(252, 125, 73))
+                elif (self.sgm.cluster_index[i] % 10 == 8):
+                    # Dark gray
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(126, 138, 162))
+                elif (self.sgm.cluster_index[i] % 10 == 9):
+                    # Dark Green
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(2, 166, 118))
+                elif (self.sgm.cluster_index[i] % 10 == 0):
+                    # Blue
+                    self.result_data_table.item(i,j).setBackground(QtGui.QColor(102, 12, 232))
         
-        # Color first column
-        for i in range(len(data.index)):
-            for j in range(len(data.columns)):
-                self.result_data_table.item(i,0).setBackground(QtGui.QColor(218,223,225))
-                self.result_data_table.item(i,len(data.columns)-1).setBackground(QtGui.QColor(25,181,254))
-        
-        
+        # Color column ID and ID_Segmen
+        #for i in range(len(data.index)):
+        #    for j in range(len(data.columns)):
+        #        self.result_data_table.item(i,0).setBackground(QtGui.QColor(218,223,225))
+        #        self.result_data_table.item(i,len(data.columns)-1).setBackground(QtGui.QColor(25,181,254))
                 
         # Create the columns header
         self.result_data_table.setHorizontalHeaderLabels(list(data.columns.values))

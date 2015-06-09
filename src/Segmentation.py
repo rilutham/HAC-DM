@@ -28,8 +28,15 @@ class Segmentation(QtGui.QWidget):
         self.n_cols = len(self.data.columns)
         n_rows = len(self.data.index)
         self.dist_data = self.data.ix[:, 1:self.n_cols]
-        self.dendro_label = self.data.ix[0:n_rows, 0:1]
+        self.label = self.data.ix[0:n_rows, 0:1]
+        
+        # Label for dendrogram
+        self.dendro_label = []
+        for i in range(n_rows):
+            self.dendro_label.append(self.label.values[i][0])
+            
         self.df_result_data = None
+        
         # Call initial methods
         self.count_distance()
         self.do_segmentation()
@@ -43,18 +50,19 @@ class Segmentation(QtGui.QWidget):
         # Cluster using complete linkage
         self.row_clusters = linkage(self.row_dist, method='complete')
         
-        # Generate dendrogram and labels
-        dendrogram(self.row_clusters,labels = self.dendro_label.values)
-        
         self.df_result_data = self.data
         # Generate cluster index
-        cluster_index = fcluster(self.row_clusters, t=2, criterion='maxclust')
+        self.cluster_index = fcluster(self.row_clusters, t=2, criterion='maxclust')
+        
+        # Generate dendrogram and labels
+        dendrogram(self.row_clusters, labels = self.dendro_label, leaf_font_size = 9, leaf_rotation = 90)
+        
         # Add new column (cluster_index) to result data
-        self.df_result_data['ID_Segmen'] = cluster_index
+        self.df_result_data['ID_Segmen'] = self.cluster_index
 
-        self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(cluster_index))
+        self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(self.cluster_index))
 
-        freq_of_cluster = dict(itemfreq(cluster_index))
+        freq_of_cluster = dict(itemfreq(self.cluster_index))
         self.summary_list = []
         for key, val in freq_of_cluster.items():
             isi = "Segmen ke-{0}: {1} pelanggan".format(key,val)
@@ -63,19 +71,20 @@ class Segmentation(QtGui.QWidget):
 
     def refresh_result_data(self, treshold):
         # Generate dendrogram and labels
-        dendrogram(self.row_clusters, color_threshold=treshold ,labels = self.dendro_label.values)
+        dendrogram(self.row_clusters, color_threshold=treshold ,labels = self.dendro_label, \
+                   leaf_font_size = 9, leaf_rotation = 90)
         
         self.df_result_data = self.data
         # Generate cluster index
-        cluster_index = fcluster(self.row_clusters, t=treshold, criterion='distance')
+        self.cluster_index = fcluster(self.row_clusters, t=treshold, criterion='distance')
         # Add new column (cluster_index) to result data
-        self.df_result_data['ID_Segmen'] = cluster_index
+        self.df_result_data['ID_Segmen'] = self.cluster_index
 
-        freq_of_cluster = dict(itemfreq(cluster_index))
+        freq_of_cluster = dict(itemfreq(self.cluster_index))
         self.summary_list = []
         for key, val in freq_of_cluster.items():
             isi = "Segmen ke-{0}: {1} pelanggan".format(key,val)
             self.summary_list.append(isi)
         print self.summary_list
-        self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(cluster_index))
+        self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(self.cluster_index))
         
