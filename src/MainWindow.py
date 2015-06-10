@@ -104,10 +104,10 @@ class MainWindow(QtGui.QMainWindow):
         self.tab1 = QtGui.QWidget()  
         self.tab2 = QtGui.QWidget()
         self.tab3 = QtGui.QWidget()
-
-        self.tabs.addTab(self.tab1, "Pengolahan Data")
+        self.tab4 = QtGui.QWidget()  
 
         ### Setting Tab 1 ###
+        self.tabs.addTab(self.tab1, "Pengolahan Data")
         ## Left side
         # Frame "data detail"
         self.stat_frame = QtGui.QFrame()
@@ -179,7 +179,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.toolbar.hide()
         
         ### Setting Tab 3 ###
-        self.tabs.addTab(self.tab3, "Data Hasil Segmentasi")
+        self.tabs.addTab(self.tab3, "Informasi Hasil Segmentasi")
         self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
 Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
         self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
@@ -209,18 +209,27 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.left_side_3_layout.addWidget(self.summary_frame)
         self.left_side_3_layout.addWidget(self.empty_frame_3)
 
-        self.result_data_table = QtGui.QTableWidget(self) 
+        self.knowledge_table = QtGui.QTableWidget(self)
         self.v_box_layout_3 = QtGui.QHBoxLayout()
         self.v_box_layout_3.addWidget(self.txt_result_exist)
         self.v_box_layout_3.addWidget(self.left_frame_3)
-        self.v_box_layout_3.addWidget(self.result_data_table)
+        self.v_box_layout_3.addWidget(self.knowledge_table)
         self.left_frame_3.hide()
+        self.knowledge_table.hide()
+        
+        ### Setting Tab 4 ###
+        self.tabs.addTab(self.tab4, "Data Hasil Segmentasi")
+        self.result_data_table = QtGui.QTableWidget(self) 
+        self.v_box_layout_4 = QtGui.QHBoxLayout()
+        self.v_box_layout_4.insertWidget(0, self.result_data_table)
         self.result_data_table.hide()
+        
         
         #Set Layout for each tab
         self.tab1.setLayout(self.v_box_layout_1)
         self.tab2.setLayout(self.v_box_layout_2)
         self.tab3.setLayout(self.v_box_layout_3)
+        self.tab4.setLayout(self.v_box_layout_4)
         
         # main layout
         self.main_layout = QtGui.QVBoxLayout()
@@ -272,6 +281,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.figure.clf()
                 self.left_frame_3.hide()
                 self.result_data_table.hide()
+                self.knowledge_table.hide()
                     
                 # Enable/ disable some menu
                 self.seg_action.setEnabled(True)
@@ -378,6 +388,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.toolbar.show()
             self.txt_result_exist.hide()
             self.result_data_table.show()
+            self.knowledge_table.show()
 
 
             self.show_result_summary()
@@ -390,6 +401,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.display_result_data(self.sgm.df_result_data)
             # Enable some menu item
             self.save_result_action.setEnabled(True)
+            
+            self.show_knowledge(self.sgm.df_result_data)
 
     def show_result_summary(self):
         self.cluster_list.clear()
@@ -414,6 +427,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.tabs.setCurrentWidget(self.tab2)
         # Display result data in QTableWidget
         self.display_result_data(self.sgm.df_result_data)
+        
+        self.show_knowledge(self.sgm.df_result_data)
         
     def display_result_data(self, data):    
         # Specify the number of rows and columns of table
@@ -455,16 +470,26 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 elif (self.sgm.cluster_index[i] % 10 == 0):
                     # Blue
                     self.result_data_table.item(i,j).setBackground(QtGui.QColor(102, 12, 232))
-        
-        # Color column ID and ID_Segmen
-        #for i in range(len(data.index)):
-        #    for j in range(len(data.columns)):
-        #        self.result_data_table.item(i,0).setBackground(QtGui.QColor(218,223,225))
-        #        self.result_data_table.item(i,len(data.columns)-1).setBackground(QtGui.QColor(25,181,254))
                 
         # Create the columns header
         self.result_data_table.setHorizontalHeaderLabels(list(data.columns.values))
-    
+
+    def show_knowledge(self, data):
+        # Show knowledge result
+        grouped_data = data.groupby('ID_Segmen')
+        summed_data =  grouped_data.sum()
+        # Specify the number of rows and columns of table
+        self.knowledge_table.setRowCount(grouped_data.ngroups)
+        self.knowledge_table.setColumnCount(len(grouped_data.sum().columns))
+        # Set cell value of table
+        for i in range(grouped_data.ngroups):
+            for j in range(len(grouped_data.sum().columns)):
+                self.knowledge_table.setItem\
+                (i, j, QtGui.QTableWidgetItem(str(summed_data.get_values()[i][j])))
+        
+        # Create the columns header
+        self.knowledge_table.setHorizontalHeaderLabels(list(grouped_data.sum().columns.values))
+                  
     def save_result_data(self):
         # Provides a dialog that allow users to give file name and location on disk.
         self.file_name_save = QtGui.QFileDialog.getSaveFileName\
