@@ -5,7 +5,7 @@
 --- Undergraduate Thesis Project ---
 
 Riky Lutfi Hamzah
-Informatics Engineering 
+Informatics Engineering
 Indonesia Computer University
 """
 
