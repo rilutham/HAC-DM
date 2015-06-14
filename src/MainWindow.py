@@ -210,12 +210,20 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.left_side_3_layout.addWidget(self.empty_frame_3)
 
         self.knowledge_table = QtGui.QTableWidget(self)
+        self.knowledge_text = QtGui.QTextBrowser(self)
+        self.right_frame_3 = QtGui.QFrame()
+        self.right_side_3_layout = QtGui.QVBoxLayout()
+        self.right_frame_3.setLayout(self.right_side_3_layout)
+        self.right_side_3_layout.addWidget(self.knowledge_table)
+        self.right_side_3_layout.addWidget(self.knowledge_text)
+        
         self.v_box_layout_3 = QtGui.QHBoxLayout()
         self.v_box_layout_3.addWidget(self.txt_result_exist)
         self.v_box_layout_3.addWidget(self.left_frame_3)
-        self.v_box_layout_3.addWidget(self.knowledge_table)
+        self.v_box_layout_3.addWidget(self.right_frame_3)
         self.left_frame_3.hide()
         self.knowledge_table.hide()
+        self.knowledge_text.hide()
         
         ### Setting Tab 4 ###
         self.tabs.addTab(self.tab4, "Data Hasil Segmentasi")
@@ -282,6 +290,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.left_frame_3.hide()
                 self.result_data_table.hide()
                 self.knowledge_table.hide()
+                self.knowledge_text.hide()
                     
                 # Enable/ disable some menu
                 self.seg_action.setEnabled(True)
@@ -389,7 +398,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.txt_result_exist.hide()
             self.result_data_table.show()
             self.knowledge_table.show()
-
+            self.knowledge_text.show()
 
             self.show_result_summary()
             
@@ -489,7 +498,43 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         
         # Create the columns header
         self.knowledge_table.setHorizontalHeaderLabels(list(grouped_data.sum().columns.values))
-                  
+        
+        self.knowledge_text.clear()
+        
+        for i in range(grouped_data.ngroups):
+            size_of_each_group = list(grouped_data.size())[i]
+            item1 = int(summed_data['jumlah_item_1'].get_values()[i])
+            item2 = int(summed_data['jumlah_item_2'].get_values()[i])
+            item3 = int(summed_data['jumlah_item_lbs3'].get_values()[i])
+            transaksi1 = int(summed_data['jumlah_transaksi_1'].get_values()[i])
+            transaksi2 = int(summed_data['jumlah_transaksi_lbs2'].get_values()[i])
+            custom_name = int(summed_data['custom_name'].get_values()[i])
+            segmen_title = "Segmen ke-{0}".format(i+1)
+            self.knowledge_text.append(segmen_title)
+            ket1 = "> Pelanggan pada segmen ke-{0} membeli sebanyak: ".format(i+1)
+            self.knowledge_text.append(ket1)
+            if item1 > 0:
+                item1_note = "    1 jersey: {0} pelanggan ({1:.2f}%)".format(item1, float(item1) / size_of_each_group * 100)
+                self.knowledge_text.append(item1_note)
+            if item2 > 0:
+                item2_note = "    2 jersey: {0} pelanggan ({1:.2f}%)".format(item2, float(item2) / size_of_each_group * 100)
+                self.knowledge_text.append(item2_note)
+            if item3 > 0:
+                item3_note = "    lebih dari 2 jersey: {0} pelanggan ({1:.2f}%)".format(item3, float(item3) / size_of_each_group * 100)
+                self.knowledge_text.append(item3_note)
+            self.knowledge_text.append("dalam:")
+            if transaksi1 > 0:
+                transaksi1_note = "    1x transaksi: {0} pelanggan ({1:.2f}%)".format(transaksi1, float(transaksi1) / size_of_each_group * 100)
+                self.knowledge_text.append(transaksi1_note)
+            if transaksi2 > 0:
+                transaksi2_note = "    lebih dari 1x transaksi: {0} pelanggan ({1:.2f}%)".format(transaksi2, float(transaksi2) / size_of_each_group * 100)
+                self.knowledge_text.append(transaksi2_note)
+            if custom_name > 0:
+                custom_name_note = "> Pelanggan yang membeli custom name sebanyak {0} pelanggan ({1:.2f}%)".format(custom_name, float(custom_name) / size_of_each_group * 100)
+                self.knowledge_text.append(custom_name_note)
+            new_line = "\n"
+            self.knowledge_text.append(new_line)
+                 
     def save_result_data(self):
         # Provides a dialog that allow users to give file name and location on disk.
         self.file_name_save = QtGui.QFileDialog.getSaveFileName\
