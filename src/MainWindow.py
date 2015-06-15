@@ -13,7 +13,6 @@ from About import About
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
-from matplotlib.pyplot import ylabel
 
 class MainWindow(QtGui.QMainWindow):
     '''
@@ -59,7 +58,7 @@ class MainWindow(QtGui.QMainWindow):
         derive_act = QtGui.QAction('Penurunan atribut', self)
         derive_act.triggered.connect(self.derive_attribute)
         
-        self.seg_action = QtGui.QAction('Proses', self)
+        self.seg_action = QtGui.QAction(QtGui.QIcon('icons/run.png'),'Proses', self)
         self.seg_action.setShortcut('F5')
         self.seg_action.setStatusTip('Jalankan proses segmentasi')
         self.seg_action.setEnabled(False)
@@ -94,6 +93,7 @@ class MainWindow(QtGui.QMainWindow):
         # Toolbar setting
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(import_action)
+        toolbar.addAction(self.seg_action)
         toolbar.addAction(self.save_result_action)
         
         # Show statusbar
@@ -117,15 +117,15 @@ class MainWindow(QtGui.QMainWindow):
         self.txt_stats = QtGui.QLabel('', self)
         self.txt_note = QtGui.QLabel("Keterangan Tabel: ", self)
         self.txt_note.setStyleSheet("font: bold")
-        self.txt_label = QtGui.QLabel("  Label/ Meta atribut", self)
-        self.txt_label.setStyleSheet("background-color:#19B5FE; color:black")
+        txt_label_1 = QtGui.QLabel("  Label/ Meta atribut", self)
+        txt_label_1.setStyleSheet("background-color:#19B5FE; color:black")
         # VLayout for frame "data detail"
         self.stat_layout = QtGui.QVBoxLayout()
         self.stat_frame.setLayout(self.stat_layout)
         self.stat_layout.insertWidget(0, self.txt_data_detail)
         self.stat_layout.insertWidget(1, self.txt_stats)
         self.stat_layout.insertWidget(2, self.txt_note)
-        self.stat_layout.insertWidget(3, self.txt_label)
+        self.stat_layout.insertWidget(3, txt_label_1)
         # Empty frame
         self.empty_frame_1 = QtGui.QFrame()
         # Left side frame in Tab 1
@@ -159,8 +159,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.treshold_edit = QtGui.QLineEdit()
         self.btn_treshold = QtGui.QPushButton("Submit", self)
         self.btn_treshold.clicked.connect(self.set_treshold)
-        self.figure = plt.figure()
-        self.canvas_for_dendrogram = FigureCanvas(self.figure) 
+        self.figure = plt.figure(facecolor='#dadfe1')
+        self.canvas_for_dendrogram = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas_for_dendrogram, self)
         self.treshold_frame = QtGui.QFrame()
         self.treshold_layout = QtGui.QHBoxLayout()
@@ -180,16 +180,20 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         
         ### Setting Tab 3 ###
         self.tabs.addTab(self.tab3, "Informasi Hasil Segmentasi")
-        self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
+        self.txt_information_exist = QtGui.QLabel("""Tidak ada informasi yang ditampilkan.\n
 Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
-        self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
+        self.txt_information_exist.setStyleSheet("color: gray; font: italic;")
 
         self.txt_summary = QtGui.QLabel("Hasil Segmentasi Pelanggan: ", self)
         self.txt_summary.setStyleSheet("font: bold;")
         self.txt_n_cluster = QtGui.QLabel('',self)
         self.cluster_list = QtGui.QListWidget()
         self.cluster_list.setMaximumHeight(225)
-
+        txt_note_3 = QtGui.QLabel("Keterangan Tabel: ", self)
+        txt_note_3.setStyleSheet("font: bold")
+        txt_label_3 = QtGui.QLabel("  ID_Segmen", self)
+        txt_label_3.setStyleSheet("background-color:#3FC380; color:black")
+        
         self.summary_frame = QtGui.QFrame()
         self.summary_frame.setMaximumHeight(300)
         self.summary_layout = QtGui.QVBoxLayout()
@@ -197,6 +201,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.summary_layout.insertWidget(0, self.txt_summary)
         self.summary_layout.insertWidget(1, self.txt_n_cluster)
         self.summary_layout.insertWidget(2, self.cluster_list)
+        self.summary_layout.insertWidget(3, txt_note_3)
+        self.summary_layout.insertWidget(4, txt_label_3)
         # Empty frame
         self.empty_frame_3 = QtGui.QFrame()
         # Left side frame in Tab 3
@@ -208,30 +214,41 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.left_frame_3.setLayout(self.left_side_3_layout)
         self.left_side_3_layout.addWidget(self.summary_frame)
         self.left_side_3_layout.addWidget(self.empty_frame_3)
-
+        # Right side
+        self.txt_summary_stat = QtGui.QLabel("Statistik: ", self)
+        self.txt_summary_stat.setStyleSheet("font: bold;")
         self.knowledge_table = QtGui.QTableWidget(self)
+        self.txt_summary_exp = QtGui.QLabel("Keterangan: ", self)
+        self.txt_summary_exp.setStyleSheet("font: bold;")
         self.knowledge_text = QtGui.QTextBrowser(self)
         self.right_frame_3 = QtGui.QFrame()
         self.right_side_3_layout = QtGui.QVBoxLayout()
         self.right_frame_3.setLayout(self.right_side_3_layout)
+        self.right_side_3_layout.addWidget(self.txt_summary_stat)
         self.right_side_3_layout.addWidget(self.knowledge_table)
+        self.right_side_3_layout.addWidget(self.txt_summary_exp)
         self.right_side_3_layout.addWidget(self.knowledge_text)
         
         self.v_box_layout_3 = QtGui.QHBoxLayout()
-        self.v_box_layout_3.addWidget(self.txt_result_exist)
+        self.v_box_layout_3.addWidget(self.txt_information_exist)
         self.v_box_layout_3.addWidget(self.left_frame_3)
         self.v_box_layout_3.addWidget(self.right_frame_3)
         self.left_frame_3.hide()
         self.knowledge_table.hide()
         self.knowledge_text.hide()
+        self.txt_summary_exp.hide()
+        self.txt_summary_stat.hide()
         
         ### Setting Tab 4 ###
         self.tabs.addTab(self.tab4, "Data Hasil Segmentasi")
+        self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
+Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
+        self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
         self.result_data_table = QtGui.QTableWidget(self) 
         self.v_box_layout_4 = QtGui.QHBoxLayout()
-        self.v_box_layout_4.insertWidget(0, self.result_data_table)
+        self.v_box_layout_4.insertWidget(0, self.txt_result_exist)
+        self.v_box_layout_4.insertWidget(1, self.result_data_table)
         self.result_data_table.hide()
-        
         
         #Set Layout for each tab
         self.tab1.setLayout(self.v_box_layout_1)
@@ -248,8 +265,6 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.central_widget.setLayout(self.main_layout)
         # set central widget
         self.setCentralWidget(self.central_widget)
-    
-    
         
     def show_import(self):
         self.imp = RawData()
@@ -279,6 +294,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.left_frame.show()
                 self.raw_data_table.show() 
                 self.txt_visual_exist.show()
+                self.txt_information_exist.show()
                 self.txt_result_exist.show()
                 
                 # Close widget
@@ -291,6 +307,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.result_data_table.hide()
                 self.knowledge_table.hide()
                 self.knowledge_text.hide()
+                self.txt_summary_exp.hide()
+                self.txt_summary_stat.hide()
                     
                 # Enable/ disable some menu
                 self.seg_action.setEnabled(True)
@@ -393,13 +411,17 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.txt_n_cluster.setText(self.sgm.n_cluster)
             self.txt_visual_exist.hide()
             self.treshold_frame.show()
+            plt.ylabel("Jarak antar pelanggan")
+            plt.xlabel("Pelanggan")
             self.canvas_for_dendrogram.show()
             self.toolbar.show()
             self.txt_result_exist.hide()
             self.result_data_table.show()
+            self.txt_information_exist.hide()
             self.knowledge_table.show()
             self.knowledge_text.show()
-
+            self.txt_summary_exp.show()
+            self.txt_summary_stat.show()
             self.show_result_summary()
             
             # Draw dendrogram on canvas
@@ -487,18 +509,29 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         # Show knowledge result
         grouped_data = data.groupby('ID_Segmen')
         summed_data =  grouped_data.sum()
+        # Add new column (cluster_ID) to knowledge data
+        #summed_data['ID_Segmen'] =
+        #self.cluster_index 
         # Specify the number of rows and columns of table
         self.knowledge_table.setRowCount(grouped_data.ngroups)
-        self.knowledge_table.setColumnCount(len(grouped_data.sum().columns))
+        self.knowledge_table.setColumnCount(len(grouped_data.sum().columns) + 1)
         # Set cell value of table
         for i in range(grouped_data.ngroups):
+            self.knowledge_table.setItem(i,0,QtGui.QTableWidgetItem(str(i+1)))
             for j in range(len(grouped_data.sum().columns)):
                 self.knowledge_table.setItem\
-                (i, j, QtGui.QTableWidgetItem(str(summed_data.get_values()[i][j])))
-        
+                (i, j+1, QtGui.QTableWidgetItem(str(summed_data.get_values()[i][j])))
+            
         # Create the columns header
-        self.knowledge_table.setHorizontalHeaderLabels(list(grouped_data.sum().columns.values))
+        knowledge_column_name = list(grouped_data.sum().columns.values)
+        knowledge_column_name.insert(0,"Segmen ke-")
+        self.knowledge_table.setHorizontalHeaderLabels(knowledge_column_name)
         
+        # Color first column
+        for i in range(grouped_data.ngroups):
+            for j in range(len(grouped_data.sum().columns) + 1):
+                self.knowledge_table.item(i,0).setBackground(QtGui.QColor(63,195,128))
+                
         self.knowledge_text.clear()
         
         for i in range(grouped_data.ngroups):
@@ -511,7 +544,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             custom_name = int(summed_data['custom_name'].get_values()[i])
             segmen_title = "Segmen ke-{0}".format(i+1)
             self.knowledge_text.append(segmen_title)
-            ket1 = "> Pelanggan pada segmen ke-{0} membeli sebanyak: ".format(i+1)
+            ket1 = "> Pelanggan pada segmen ke-{0} membeli: ".format(i+1)
             self.knowledge_text.append(ket1)
             if item1 > 0:
                 item1_note = "    1 jersey: {0} pelanggan ({1:.2f}%)".format(item1, float(item1) / size_of_each_group * 100)
