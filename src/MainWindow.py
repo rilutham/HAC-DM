@@ -453,6 +453,8 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.show_result_summary()
 
         # Draw dendrogram on canvas
+        plt.ylabel("Jarak antar pelanggan")
+        plt.xlabel("Pelanggan")
         self.canvas_for_dendrogram.draw()
         # Set to Tab 2
         self.tabs.setCurrentWidget(self.tab2)
