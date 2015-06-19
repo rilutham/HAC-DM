@@ -10,6 +10,7 @@ import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.stats import itemfreq
+from sklearn.metrics import silhouette_score
 
 
 class Segmentation(QtGui.QWidget):
@@ -55,7 +56,7 @@ class Segmentation(QtGui.QWidget):
         self.cluster_index = fcluster(self.row_clusters, t=2, criterion='maxclust')
         
         # Generate dendrogram and labels
-        dendrogram(self.row_clusters, labels = self.dendro_label, leaf_font_size = 9, leaf_rotation = 90)
+        dendrogram(self.row_clusters,labels = self.dendro_label, leaf_font_size = 9, leaf_rotation = 90)
         
         # Add new column (cluster_index) to result data
         self.df_result_data['ID_Segmen'] = self.cluster_index
@@ -68,10 +69,14 @@ class Segmentation(QtGui.QWidget):
             isi = "Segmen ke-{0}: {1} pelanggan".format(key,val)
             self.summary_list.append(isi)
         print self.summary_list
+        
+        # Silhouette
+        a = silhouette_score(self.row_dist, self.df_result_data['ID_Segmen'], metric="precomputed")
+        print a
 
     def refresh_result_data(self, treshold):
         # Generate dendrogram and labels
-        dendrogram(self.row_clusters, color_threshold=treshold ,labels = self.dendro_label, \
+        dendrogram(self.row_clusters, color_threshold=treshold, labels = self.dendro_label, \
                    leaf_font_size = 9, leaf_rotation = 90)
         
         self.df_result_data = self.data
@@ -88,3 +93,6 @@ class Segmentation(QtGui.QWidget):
         print self.summary_list
         self.n_cluster = "Jumlah segmen yang terbentuk: {0}".format(max(self.cluster_index))
         
+        # Silhouette
+        a = silhouette_score(self.row_dist, self.df_result_data['ID_Segmen'], metric="precomputed")
+        print a
