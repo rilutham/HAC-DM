@@ -4,13 +4,18 @@ README v0.1 / 24 JUNE 2015
 
 ## Introduction
 
-Clustering application for customer segmentation using *hierarchical agglomerative clustering*.
+GUI application for customer segmentation using *hierarchical agglomerative clustering*.
+
+### Methods
+* Distance between object: *jaccard distance*
+* Distance between cluster: *complete linkage*
 
 ## Usage
 
 Run program using the following command:
-
-    $ python Main.py
+```shell
+$ python Main.py
+```
 
 ## Contributing
 
@@ -28,17 +33,17 @@ Feel free to ask questions, submit bugs report or feature requests to rilutham[a
 
 ### Installation
 
-1. Clone this project to your system
+* Clone this project to your system
 ```shell
 $ git clone https://github.com/rilutham/HAC-DM.git
 ```
-2. Install prerequisite libraries
+* Install prerequisite libraries
 ```shell
 $ sudo pip install pyqt4 pandas scipy matplotlib
 ```
-3. Run program
+* Run program
 ```shell
-    $ python Main.py
+$ python Main.py
 ```
 
 ## License
