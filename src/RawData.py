@@ -12,7 +12,7 @@ class RawData(QtGui.QDialog):
     '''
     Showing dialog for select data attribute
     '''
-    
+
     def __init__(self):
         '''
         Display QDialog with QListWidget and QDialogbutton_box
@@ -52,15 +52,14 @@ class RawData(QtGui.QDialog):
         # Call initial method.
         self.get_file()
         self.add_attribute_to_list()
-    
+
     def get_file(self):
-        '''
-        Provides a dialog that allow users to select only *.csv file.
+        ''' Provides a dialog that allow users to select only *.csv file.
         '''
         self.file = QtGui.QFileDialog.getOpenFileName(self, 'Open File', ".", "(*.csv)")
         # Read the *csv file
         self.raw_data = pd.read_csv(str(self.file), header=0, index_col=False, nrows=1)
-    
+
     def add_attribute_to_list(self):
         '''
         Add all data attribute to QListWidget
@@ -89,12 +88,12 @@ class RawData(QtGui.QDialog):
             if state == 2:
                 self.selected_col.append(str(self.v_list.item(index).text()))
         self.import_selected_data()
-    
+
     def import_selected_data(self):
         '''
         Import data with the selected column
         '''
-              
+
         self.selected_data = pd.read_csv(str(self.file), header=0, index_col=False, \
                                           usecols=self.selected_col)
         # Insert data to DataFrame
@@ -103,7 +102,7 @@ class RawData(QtGui.QDialog):
         self.display_table = True
         # Signal
         self.accept()
-    
+
     def count_stats(self, data):
         #self.data_name = str(self.file)
         self.col_num = len(data.columns)
@@ -121,4 +120,4 @@ class RawData(QtGui.QDialog):
         self.display_table = False
         # Signal
         self.reject()
-        
+
