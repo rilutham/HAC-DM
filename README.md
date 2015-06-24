@@ -28,15 +28,15 @@ Feel free to ask questions, submit bugs report or feature requests to rilutham[a
 
 ### Installation
 
-* Clone this project to your system
+1. Clone this project to your system
 
     $ git clone https://github.com/rilutham/HAC-DM.git
 
-* Install prerequisite libraries
+2. Install prerequisite libraries
 
     $ sudo pip install pyqt4 pandas scipy matplotlib
 
-* Run program
+3. Run program
 
     $ python Main.py
 
