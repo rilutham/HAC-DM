@@ -33,9 +33,11 @@ Feel free to ask questions, submit bugs report or feature requests to rilutham[a
     $ git clone https://github.com/rilutham/HAC-DM.git
 
 * Install prerequisite libraries
+
     $ sudo pip install pyqt4 pandas scipy matplotlib
 
 * Run program
+
     $ python Main.py
 
 ## License
