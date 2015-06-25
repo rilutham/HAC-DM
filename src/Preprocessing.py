@@ -70,6 +70,14 @@ class Bining(QtGui.QDialog):
         self.selected_col = None
         for i in self.v_list.selectedItems():
             self.selected_col = str(i.text())
+        # Check missing value
+        if self.data[self.selected_col].isnull().values.ravel().sum() > 0:
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setText("Masih terdapat data kosong pada atribut!")
+            msgBox.setInformativeText("Silahkan hapus data kosong!")
+            msgBox.setIcon(2)
+            msgBox.exec_()
+
         # Number of bin from user input
         self.n_bin = int(self.n_bin_edit.text())
         # Do binning
