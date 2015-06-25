@@ -15,6 +15,9 @@ from MainWindow import MainWindow
 from StartupDialog import StartupDialog
 
 def main():
+    '''
+    Call StartupDialog object
+    '''
     app = QtGui.QApplication(sys.argv)
     window = MainWindow()
     window.show()
@@ -24,3 +27,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

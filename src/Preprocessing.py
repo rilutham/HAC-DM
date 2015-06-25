@@ -24,7 +24,7 @@ class Bining(QtGui.QDialog):
         left = (desktop_size.width()/2)-(size.width()/2)
         top = (desktop_size.height()/2)-(size.height()/2)
         self.move(left, top)
-        
+
         # Qlabel for instruction.
         txt_select = QtGui.QLabel('Silahkan pilih atribut!', self)
         # ListWidget for display data column
@@ -37,7 +37,8 @@ class Bining(QtGui.QDialog):
         self.bin_layout.addWidget(txt_n_bin)
         self.bin_layout.addWidget(self.n_bin_edit)
         # button_box
-        button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | \
+                QtGui.QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.get_selected_column)
         button_box.rejected.connect(self.close_dialog)
         # Displaying the widget
@@ -46,21 +47,21 @@ class Bining(QtGui.QDialog):
         self.layout_vertical.addWidget(self.v_list)
         self.layout_vertical.addWidget(self.bin_frame)
         self.layout_vertical.addWidget(button_box)
-    
+
     def add_attribute_to_list(self, data):
         '''
         Add all data attribute to QListWidget
         '''
         self.data = data
-        self.cols = [] 
+        self.cols = []
         for i in list(self.data.columns):
             self.cols.append(i)
-            
+
         # Add checkbox to each of attribute
         for col in self.cols:
             self.item = QtGui.QListWidgetItem(col)
             self.v_list.addItem(self.item)
-    
+
     def get_selected_column(self):
         '''
         get selected column
@@ -69,33 +70,32 @@ class Bining(QtGui.QDialog):
         self.selected_col = None
         for i in self.v_list.selectedItems():
             self.selected_col = str(i.text())
-        
-        print self.selected_col
         # Number of bin from user input
         self.n_bin = int(self.n_bin_edit.text())
         # Do binning
         bins = []
         if self.n_bin == 2:
             bins = [0, min(self.data[self.selected_col]), max(self.data[self.selected_col])]
-            group_names = ['1','2']
+            group_names = ['1', '2']
         elif self.n_bin == 3:
             bins = [0, min(self.data[self.selected_col]), 2, max(self.data[self.selected_col])]
-            group_names = ['1','2','3']
-        elif (self.n_bin < 2 or self.n_bin > 3):
-            msgBox = QtGui.QMessageBox(self)
-            msgBox.setText("Jumlah bin tidak diizinkan.")
-            msgBox.setInformativeText("Silahkan masukkan jumlah bin yang sesuai!")
-            msgBox.setIcon(2)
-            msgBox.exec_()
+            group_names = ['1', '2', '3']
+        elif self.n_bin < 2 or self.n_bin > 3:
+            msg_box = QtGui.QMessageBox(self)
+            msg_box.setText("Jumlah bin tidak diizinkan.")
+            msg_box.setInformativeText("Silahkan masukkan jumlah bin yang sesuai!")
+            msg_box.setIcon(2)
+            msg_box.exec_()
 
         # Add new value to attribute
         if bins:
-            self.data[self.selected_col] = pd.cut(self.data[self.selected_col], bins, labels=group_names)
+            self.data[self.selected_col] = pd.cut(self.data[self.selected_col], \
+                    bins, labels=group_names)
         # State of displaying data on MainWindow
         self.display_table = True
         # Signal
         self.accept()
-        
+
     def close_dialog(self):
         '''
         Close dialog
@@ -123,13 +123,14 @@ class DeriveAttribute(QtGui.QDialog):
         left = (desktop_size.width()/2)-(size.width()/2)
         top = (desktop_size.height()/2)-(size.height()/2)
         self.move(left, top)
-        
+
         # Qlabel for instruction.
         txt_select = QtGui.QLabel('Silahkan pilih atribut!', self)
         # ListWidget for display data column
         self.v_list = QtGui.QListWidget()
         # button_box
-        button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        button_box = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | \
+                QtGui.QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.get_selected_column)
         button_box.rejected.connect(self.close_dialog)
         # Displaying the widget
@@ -137,21 +138,21 @@ class DeriveAttribute(QtGui.QDialog):
         self.layout_vertical.addWidget(txt_select)
         self.layout_vertical.addWidget(self.v_list)
         self.layout_vertical.addWidget(button_box)
-    
+
     def add_attribute_to_list(self, data):
         '''
         Add all data attribute to QListWidget
         '''
         self.data = data
-        self.cols = [] 
+        self.cols = []
         for i in list(self.data.columns):
             self.cols.append(i)
-            
+
         # Add checkbox to each of attribute
         for col in self.cols:
             self.item = QtGui.QListWidgetItem(col)
             self.v_list.addItem(self.item)
-    
+
     def get_selected_column(self):
         '''
         get selected column
@@ -159,17 +160,15 @@ class DeriveAttribute(QtGui.QDialog):
         # selected column
         for i in self.v_list.selectedItems():
             self.selected_col = str(i.text())
-        print("da {0}".format(self.selected_col))
         # Count number of possible value for each column
         unique_value = self.data.groupby(self.selected_col).count()
-        print unique_value
         unique_value_len = len(unique_value.index)
-        
+
         # Create list for new atribut
         val_list = []
-        for x in range(0,unique_value_len): 
-            for y in range(0,len(self.data[self.selected_col].index)):
-                if x == 0:    
+        for x in range(0, unique_value_len):
+            for y in range(0, len(self.data[self.selected_col].index)):
+                if x == 0:
                     if self.data[self.selected_col][y] == '1':
                         val_list.append(1)
                     else:
@@ -184,7 +183,7 @@ class DeriveAttribute(QtGui.QDialog):
                         val_list.append(1)
                     else:
                         val_list.append(0)
-            name = "{0}_{1}".format(self.selected_col,x+1)
+            name = "{0}_{1}".format(self.selected_col, x+1)
             self.data[name] = val_list
             val_list = []
         # Delete "super-column"
@@ -193,7 +192,7 @@ class DeriveAttribute(QtGui.QDialog):
         self.display_table = True
         # Signal
         self.accept()
-        
+
     def close_dialog(self):
         '''
         Close dialog

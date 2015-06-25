@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""About.py 
+"""About.py
 @author: rilutham
 """
 
@@ -16,18 +16,18 @@ class StartupDialog(QtGui.QDialog):
         super(StartupDialog, self).__init__()
         self.setWindowTitle('Selamat Datang di Sistem Segmentasi Pelanggan')
         self.resize(370, 200)
-        
+
         # Logo
         pic = QtGui.QLabel(self)
         pic.setGeometry(0, 0, 363, 140)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/icons/logo3.png"))
-        
+
         # Button
         self.btn_help = QtGui.QPushButton("Halaman Bantuan", self)
         self.btn_help.clicked.connect(self.show_help)
         self.btn_pass_to_app = QtGui.QPushButton("Ke Aplikasi >>", self)
         self.btn_pass_to_app.clicked.connect(self.pass_to_app)
-        
+
         # Display Button
         self.btn_frame = QtGui.QFrame()
         self.horiz_layout = QtGui.QHBoxLayout(self)
@@ -38,12 +38,18 @@ class StartupDialog(QtGui.QDialog):
         self.layout_vertical = QtGui.QVBoxLayout(self)
         self.layout_vertical.addWidget(pic)
         self.layout_vertical.addWidget(self.btn_frame)
-    
+
     def show_help(self):
+        '''
+        Show help or documentation
+        '''
         self.reject()
         abt = About()
         abt.exec_()
-        
+
     def pass_to_app(self):
+        '''
+        Pass to main window
+        '''
         self.reject()
-    
+

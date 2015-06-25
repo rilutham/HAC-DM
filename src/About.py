@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""About.py 
+"""About.py
 @author: rilutham
 """
 
@@ -11,7 +11,13 @@ class About(QtGui.QDialog):
     Display application information
     """
     def __init__(self):
+        '''
+        Constructor
+        '''
         super(About, self).__init__()
+        self.init_dialog()
+
+    def init_dialog(self):
         self.setWindowTitle('Tentang Aplikasi')
         self.resize(350, 350)
         self.txt_about = QtGui.QLabel("""Customer Segmentation System
@@ -21,11 +27,11 @@ Build id: 2015-05-9
 (c) Copyleft Riky Lutfi Hamzah.  All rights reserved.
 Visit http://github.com/rilutham/HAC-DM
 
-Developed by Riky Lutfi Hamzah 
+Developed by Riky Lutfi Hamzah
 http://rikylutfihamzah.com/""", self)
         self.scroll_reg = QtGui.QScrollArea()
         self.scroll_reg.setWidget(self.txt_about)
         # Displaying the widget
         self.layout_vertical = QtGui.QVBoxLayout(self)
         self.layout_vertical.addWidget(self.scroll_reg)
-    
+

@@ -18,14 +18,14 @@ class MainWindow(QtGui.QMainWindow):
     '''
     classdocs
     '''
-    
+
     def __init__(self):
         '''
         Constructor
         '''
         super(MainWindow, self).__init__()
         self.init_ui()
-    
+
     def init_ui(self):
         # Main window setting
         self.setGeometry(0, 0, 980, 768)
@@ -36,44 +36,44 @@ class MainWindow(QtGui.QMainWindow):
         import_action.setShortcut('Ctrl+i')
         import_action.setStatusTip('Impor data pelanggan')
         import_action.triggered.connect(self.show_import)
-        
+
         exit_action = QtGui.QAction('Keluar', self)
         exit_action.setShortcut('Ctrl+q')
         exit_action.setStatusTip('Keluar dari aplikasi')
         exit_action.triggered.connect(self.close)
-        
+
         fill_zero_act = QtGui.QAction('Isi dengan nilai 0', self)
         fill_zero_act.triggered.connect(self.fill_with_zero)
-        
+
         delete_row_act = QtGui.QAction('Hapus baris', self)
         delete_row_act.triggered.connect(self.delete_missing_row)
-        
+
         miss_value_action = QtGui.QMenu('Tangani nilai kosong', self)
         miss_value_action.addAction(fill_zero_act)
         miss_value_action.addAction(delete_row_act)
-        
+
         bining_act = QtGui.QAction('Bining atribut', self)
         bining_act.triggered.connect(self.show_bining)
-        
+
         derive_act = QtGui.QAction('Penurunan atribut', self)
         derive_act.triggered.connect(self.derive_attribute)
-        
+
         self.seg_action = QtGui.QAction(QtGui.QIcon('icons/run.png'),'Proses', self)
         self.seg_action.setShortcut('F5')
         self.seg_action.setStatusTip('Jalankan proses segmentasi')
         self.seg_action.setEnabled(False)
         self.seg_action.triggered.connect(self.segmen_customer)
-        
+
         self.save_result_action = QtGui.QAction(QtGui.QIcon('icons/save.png'),\
                                                 'Simpan data hasil', self)
         self.save_result_action.setShortcut('Ctrl+Shift+S')
         self.save_result_action.setStatusTip('Simpan data hasil segmentasi')
         self.save_result_action.setEnabled(False)
         self.save_result_action.triggered.connect(self.save_result_data)
-        
+
         about_action = QtGui.QAction('Tentang Aplikasi', self)
         about_action.triggered.connect(self.show_about)
-        
+
         # Menubar setting
         menubar = self.menuBar()
         data_menu = menubar.addMenu('&Data')
@@ -89,22 +89,22 @@ class MainWindow(QtGui.QMainWindow):
         result_menu.addAction(self.save_result_action)
         help_menu = menubar.addMenu('&Bantuan')
         help_menu.addAction(about_action)
-        
+
         # Toolbar setting
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(import_action)
         toolbar.addAction(self.seg_action)
         toolbar.addAction(self.save_result_action)
-        
+
         # Show statusbar
         self.statusBar()
-        
+
         # Setting TabWidget
         self.tabs = QtGui.QTabWidget()
-        self.tab1 = QtGui.QWidget()  
+        self.tab1 = QtGui.QWidget()
         self.tab2 = QtGui.QWidget()
         self.tab3 = QtGui.QWidget()
-        self.tab4 = QtGui.QWidget()  
+        self.tab4 = QtGui.QWidget()
 
         ### Setting Tab 1 ###
         self.tabs.addTab(self.tab1, "Pengolahan Data")
@@ -149,7 +149,7 @@ Pilih menu Data > Impor data (Ctrl+i) untuk mengimpor data""", self)
         self.v_box_layout_1.addWidget(self.raw_data_table)
         self.left_frame.hide()
         self.raw_data_table.hide()
-        
+
         ### Setting Tab 2 ###
         self.tabs.addTab(self.tab2, "Visualisasi Model")
         self.txt_visual_exist = QtGui.QLabel("""Tidak ada visualisasi model yang ditampilkan.\n
@@ -177,7 +177,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.treshold_frame.hide()
         self.canvas_for_dendrogram.hide()
         self.toolbar.hide()
-        
+
         ### Setting Tab 3 ###
         self.tabs.addTab(self.tab3, "Informasi Hasil Segmentasi")
         self.txt_information_exist = QtGui.QLabel("""Tidak ada informasi yang ditampilkan.\n
@@ -193,7 +193,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         txt_note_3.setStyleSheet("font: bold")
         txt_label_3 = QtGui.QLabel("  ID_Segmen", self)
         txt_label_3.setStyleSheet("background-color:#3FC380; color:black")
-        
+
         self.summary_frame = QtGui.QFrame()
         self.summary_frame.setMaximumHeight(300)
         self.summary_layout = QtGui.QVBoxLayout()
@@ -228,7 +228,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.right_side_3_layout.addWidget(self.knowledge_table)
         self.right_side_3_layout.addWidget(self.txt_summary_exp)
         self.right_side_3_layout.addWidget(self.knowledge_text)
-        
+
         self.v_box_layout_3 = QtGui.QHBoxLayout()
         self.v_box_layout_3.addWidget(self.txt_information_exist)
         self.v_box_layout_3.addWidget(self.left_frame_3)
@@ -238,24 +238,24 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.knowledge_text.hide()
         self.txt_summary_exp.hide()
         self.txt_summary_stat.hide()
-        
+
         ### Setting Tab 4 ###
         self.tabs.addTab(self.tab4, "Data Hasil Segmentasi")
         self.txt_result_exist = QtGui.QLabel("""Tidak ada data hasil yang ditampilkan.\n
 Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau pilih menu Segmentasi > Proses.""", self)
         self.txt_result_exist.setStyleSheet("color: gray; font: italic;")
-        self.result_data_table = QtGui.QTableWidget(self) 
+        self.result_data_table = QtGui.QTableWidget(self)
         self.v_box_layout_4 = QtGui.QHBoxLayout()
         self.v_box_layout_4.insertWidget(0, self.txt_result_exist)
         self.v_box_layout_4.insertWidget(1, self.result_data_table)
         self.result_data_table.hide()
-        
+
         #Set Layout for each tab
         self.tab1.setLayout(self.v_box_layout_1)
         self.tab2.setLayout(self.v_box_layout_2)
         self.tab3.setLayout(self.v_box_layout_3)
         self.tab4.setLayout(self.v_box_layout_4)
-        
+
         # main layout
         self.main_layout = QtGui.QVBoxLayout()
         # add all main to the main vLayout
@@ -265,7 +265,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.central_widget.setLayout(self.main_layout)
         # set central widget
         self.setCentralWidget(self.central_widget)
-        
+
     def show_import(self):
         self.imp = RawData()
         self.imp.exec_()
@@ -284,19 +284,19 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 msgBox.exec_()
             else:
                 self.display_raw_data(self.imp.df_selected_data)
-                
+
                 # Count data statistics
                 self.imp.count_stats(self.imp.df_selected_data)
                 self.txt_stats.setText(self.imp.stats)
-                
+
                 # Set to Tab 1
                 self.tabs.setCurrentWidget(self.tab1)
                 self.left_frame.show()
-                self.raw_data_table.show() 
+                self.raw_data_table.show()
                 self.txt_visual_exist.show()
                 self.txt_information_exist.show()
                 self.txt_result_exist.show()
-                
+
                 # Close widget
                 self.txt_table_exist.hide()
                 self.treshold_frame.hide()
@@ -309,32 +309,32 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.knowledge_text.hide()
                 self.txt_summary_exp.hide()
                 self.txt_summary_stat.hide()
-                    
+
                 # Enable/ disable some menu
                 self.seg_action.setEnabled(True)
                 self.save_result_action.setEnabled(False)
 
     def display_raw_data(self, data):
-        self.ready_data = data   
+        self.ready_data = data
         # Specify the number of rows and columns of table
         self.raw_data_table.setRowCount(len(self.ready_data.index))
         self.raw_data_table.setColumnCount(len(self.ready_data.columns))
-        
+
         # Set cell value of table
         for i in range(len(self.ready_data.index)):
             for j in range(len(self.ready_data.columns)):
                 self.raw_data_table.setItem(i, j, QtGui.QTableWidgetItem(str(self.ready_data.iget_value(i, j))))
-        
+
         # Color first column
         for i in range(len(self.ready_data.index)):
             for j in range(len(self.ready_data.columns)):
                 self.raw_data_table.item(i,0).setBackground(QtGui.QColor(25,181,254))
-                
+
         # Create the columns header
         self.raw_data_table.setHorizontalHeaderLabels(list(self.ready_data.columns.values))
 
         return self.ready_data
-    
+
     def fill_with_zero(self):
         self.tabs.setCurrentWidget(self.tab1)
         if self.imp.missing_row_num == 0:
@@ -348,7 +348,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.imp.count_stats(self.df_clean_data)
             self.txt_stats.setText(self.imp.stats)
             self.display_raw_data(self.df_clean_data)
-    
+
     def delete_missing_row(self):
         self.tabs.setCurrentWidget(self.tab1)
         msgBox = QtGui.QMessageBox(self)
@@ -363,13 +363,13 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 msgBox.setText("Tidak terdapat data kosong!")
                 msgBox.setIcon(2)
                 msgBox.exec_()
-            elif self.imp.missing_row_num > 0:  
+            elif self.imp.missing_row_num > 0:
                 self.df_clean_data = self.imp.df_selected_data.dropna(axis=0)
                 # Count data statistics
                 self.imp.count_stats(self.df_clean_data)
                 self.txt_stats.setText(self.imp.stats)
                 self.display_raw_data(self.df_clean_data)
-        
+
     def show_bining(self):
         self.tabs.setCurrentWidget(self.tab1)
         self.bin = Bining()
@@ -384,7 +384,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 msgBox.exec_()
             else:
                 self.display_raw_data(self.bin.data)
-    
+
     def derive_attribute(self):
         self.tabs.setCurrentWidget(self.tab1)
         self.derv = DeriveAttribute()
@@ -395,7 +395,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 print("Tidak ada atribut dipilih!") #Seharusnya tampilkan dalam dialog
             else:
                 self.display_raw_data(self.derv.data)
-        
+
     def segmen_customer(self):
         if self.imp.missing_num > 0:
             msgBox = QtGui.QMessageBox(self)
@@ -405,7 +405,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         elif self.imp.missing_num == 0:
             self.sgm = Segmentation(self.ready_data)
             self.sgm
-            
+
             # Set Tab 2 and Tab 3
             self.left_frame_3.show()
             self.txt_n_cluster.setText(self.sgm.n_cluster)
@@ -423,7 +423,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.txt_summary_exp.show()
             self.txt_summary_stat.show()
             self.show_result_summary()
-            
+
             # Draw dendrogram on canvas
             self.canvas_for_dendrogram.draw()
             # Set to Tab 2
@@ -432,7 +432,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             self.display_result_data(self.sgm.df_result_data)
             # Enable some menu item
             self.save_result_action.setEnabled(True)
-            
+
             self.show_knowledge(self.sgm.df_result_data)
 
     def show_result_summary(self):
@@ -460,14 +460,14 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         self.tabs.setCurrentWidget(self.tab2)
         # Display result data in QTableWidget
         self.display_result_data(self.sgm.df_result_data)
-        
+
         self.show_knowledge(self.sgm.df_result_data)
-        
-    def display_result_data(self, data):    
+
+    def display_result_data(self, data):
         # Specify the number of rows and columns of table
         self.result_data_table.setRowCount(len(data.index))
         self.result_data_table.setColumnCount(len(data.columns))
-        
+
         # Set cell value of table
         for i in range(len(data.index)):
             for j in range(len(data.columns)):
@@ -503,7 +503,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 elif (self.sgm.cluster_index[i] % 10 == 0):
                     # Blue
                     self.result_data_table.item(i,j).setBackground(QtGui.QColor(102, 12, 232))
-                
+
         # Create the columns header
         self.result_data_table.setHorizontalHeaderLabels(list(data.columns.values))
 
@@ -513,7 +513,7 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
         summed_data =  grouped_data.sum()
         # Add new column (cluster_ID) to knowledge data
         #summed_data['ID_Segmen'] =
-        #self.cluster_index 
+        #self.cluster_index
         # Specify the number of rows and columns of table
         self.knowledge_table.setRowCount(grouped_data.ngroups)
         self.knowledge_table.setColumnCount(len(grouped_data.sum().columns) + 1)
@@ -523,19 +523,19 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
             for j in range(len(grouped_data.sum().columns)):
                 self.knowledge_table.setItem\
                 (i, j+1, QtGui.QTableWidgetItem(str(summed_data.get_values()[i][j])))
-            
+
         # Create the columns header
         knowledge_column_name = list(grouped_data.sum().columns.values)
         knowledge_column_name.insert(0,"Segmen ke-")
         self.knowledge_table.setHorizontalHeaderLabels(knowledge_column_name)
-        
+
         # Color first column
         for i in range(grouped_data.ngroups):
             for j in range(len(grouped_data.sum().columns) + 1):
                 self.knowledge_table.item(i,0).setBackground(QtGui.QColor(63,195,128))
-                
+
         self.knowledge_text.clear()
-        
+
         for i in range(grouped_data.ngroups):
             size_of_each_group = list(grouped_data.size())[i]
             item1 = int(summed_data['jumlah_item_1'].get_values()[i])
@@ -569,20 +569,20 @@ Impor data pelanggan, kemudian lakukan proses segmentasi dengan menekan F5 atau 
                 self.knowledge_text.append(custom_name_note)
             new_line = "\n"
             self.knowledge_text.append(new_line)
-                 
+
     def save_result_data(self):
         # Provides a dialog that allow users to give file name and location on disk.
         self.file_name_save = QtGui.QFileDialog.getSaveFileName\
         (self, "Save File", ".", "(Comma Separated Value *.csv)")
         # Write DataFrame into *.csv file.
         self.sgm.df_result_data.to_csv(self.file_name_save, sep=',', index=False)
-    
+
     def show_about(self):
         abt = About()
         abt.exec_()
 
     def center_on_screen(self):
-        # Centers the window on the screen. 
+        # Centers the window on the screen.
         size = self.frameSize()
         desktop_size = QtGui.QDesktopWidget().screenGeometry()
         left = (desktop_size.width()/2)-(size.width()/2)
