@@ -7,6 +7,7 @@
 
 from PyQt4 import QtGui, QtCore
 import pandas as pd
+import os
 
 class RawData(QtGui.QDialog):
     '''
@@ -51,14 +52,24 @@ class RawData(QtGui.QDialog):
         self.display_table = None
         # Call initial method.
         self.get_file()
-        self.add_attribute_to_list()
 
     def get_file(self):
-        ''' Provides a dialog that allow users to select only *.csv file.
+        ''' Provides a dialog that allow user to select only *.csv file.
         '''
         self.file = QtGui.QFileDialog.getOpenFileName(self, 'Open File', ".", "(*.csv)")
-        # Read the *csv file
-        self.raw_data = pd.read_csv(str(self.file), header=0, index_col=False, nrows=1)
+        # Check if file empty or not
+        if os.stat(self.file).st_size == 0:
+            # still have a bug
+            msgBox = QtGui.QMessageBox(self)
+            msgBox.setText("Data kosong!")
+            msgBox.setInformativeText("Silahkan impor data yang memiliki nilai.")
+            msgBox.setIcon(2)
+            msgBox.exec_()
+            self.reject()
+        else:
+            # Read the *.csv file
+            self.raw_data = pd.read_csv(str(self.file), header=0, index_col=False, nrows=1)
+            self.add_attribute_to_list()
 
     def add_attribute_to_list(self):
         '''
