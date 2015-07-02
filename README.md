@@ -1,4 +1,4 @@
-README v0.1 / 24 JUNE 2015
+README v0.1 / 2 JULY 2015
 
 # Customer Segmentation System
 
